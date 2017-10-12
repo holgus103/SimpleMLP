@@ -12,16 +12,16 @@ namespace SimpleMLP
         {
             public List<Neuron> Neurons => neurons;
             protected List<Neuron> neurons;
-            public Layer(int neuronsNumber, Bias bias = null) :this(new List<double>(neuronsNumber), bias) { }
+            public int Count => this.neurons.Count;
 
-            public Layer(List<double> initialValues, Bias bias = null)
+            public Layer(int neuronsNumber, Bias bias = null)
             {
                 neurons = new List<Neuron>();
-                for (int i = 0; i < initialValues.Count; i++)
+                for (int i = 0; i < neuronsNumber; i++)
                 {
-                     neurons.Add(new Neuron(initialValues[i]));
+                    neurons.Add(new Neuron());
                 }
-                if(bias!=null)
+                if (bias != null)
                     foreach (var neuron in neurons)
                     {
                         neuron.AddPredecessors(new List<Tuple<Neuron, double>>() { new Tuple<Neuron, double>(new Neuron(bias.Value), bias.Wage) });

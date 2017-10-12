@@ -21,10 +21,17 @@ namespace SimpleMLP
                 get
                 {
                     if (predecessors.Count > 0)
-                        return this.activate(this.calculateNetInput());
-                    else return initialValue;
+                    {
+                        if (!this.isSynced)
+                        {
+                            this.initialValue = this.initialValue = this.activate(this.calculateNetInput());
+                            this.isSynced = true;
+                        }
+                    }
+                    return initialValue;
                 }
             }
+            private bool isSynced = false;
             private double initialValue;
             private List<Tuple<Neuron, double>> predecessors = new List<Tuple<Neuron, double>>();
             private double calculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Item1.Output * t.Item2);

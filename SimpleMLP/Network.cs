@@ -8,32 +8,41 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-        private Layer inputLayer;
-        private Layer outputLayer;
-        private List<Layer> hiddenLayers;
+        //private Layer inputLayer;
+        //private Layer outputLayer;
+        private List<Layer> layers = new List<Layer>();
 
-        public Network(int hiddenLayersNumber)
+        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons)
         {
-            inputLayer = new InputLayer(new List<double>() { 0.5, 0.1 });
-            hiddenLayers = new List<Layer>();
-            Layer incomingLayer;
-            for (int i = 0; i < hiddenLayersNumber; i++)
+            var rand = new Random();
+            this.layers.Add(new InputLayer(inputNeurons));
+            this.layers.Add(new HiddenLayer(this.layers[0], createWeightLists(this.layers[0].Count, hiddenNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            this.layers.Add(new OutputLayer(this.layers[1], createWeightLists(this.layers[1].Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+        }
+
+        private List<List<double>> createWeightLists(int prev, int current)
+        {
+            // prepare list
+            List<List<double>> weights = new List<List<double>>(current);
+            // foreach neuron in the hidden layer
+            for (var i = 0; i < current; i++)
             {
-                if (i == 0)
-                    incomingLayer = inputLayer;
-                else
-                    incomingLayer = hiddenLayers[i - 1];
-                hiddenLayers.Add(new HiddenLayer(incomingLayer, new List<double>() { 0, 0 },
-                    new List<List<double>>() { new List<double>() { 0.15, 0.2 }, new List<double>() { 0.25, 0.3 } },
-                    new Bias() { Value = 1, Wage=0.35}));
+                Random r = new Random();
+                // create random weights 
+                var rawWeights = Enumerable.Repeat<int>(0, prev)
+                    .Select(e => r.Next(1, 1000));
+                var sum = rawWeights.Sum();
+                // normalize weights
+                var currentWeights = rawWeights.Select(e => (double)e / sum).ToList();
+                weights.Add(currentWeights);
             }
-            if (hiddenLayers.Count == 0)
-                incomingLayer = inputLayer;
-            else
-                incomingLayer = hiddenLayers.Last();
-            outputLayer = new OutputLayer(incomingLayer, new List<double>() { 0.01, 0.99 },
-                new List<List<double>>() { new List<double>() { 0.4, 0.45 }, new List<double>() { 0.5, 0.55 } },
-                new Bias() { Value=1, Wage = 0.6});
+
+            return weights;
+        }
+
+        public void Train()
+        {
+            // TODO: everything, kek
         }
     }
 }

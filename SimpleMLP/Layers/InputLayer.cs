@@ -11,7 +11,13 @@ namespace SimpleMLP
         class InputLayer : Layer
         {
             public InputLayer(int neuronsNumber) : base(neuronsNumber) { }
-            public InputLayer(List<double> initialValues) : base(initialValues) { }
+            public InputLayer(List<double> initialValues) : base(initialValues.Count)
+            {
+                for(var i = 0; i< initialValues.Count; i++)
+                { 
+                }
+
+            }
         }
     }
 }

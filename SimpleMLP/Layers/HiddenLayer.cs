@@ -11,13 +11,8 @@ namespace SimpleMLP
         class HiddenLayer : Layer
         {
             List<Tuple<Neuron, double>> incomingLayerTuple;
-            public HiddenLayer(Layer incomingLayer, List<double> initialValues, List<List<double>> initialWages, Bias bias = null) : base(initialValues, bias)
+            public HiddenLayer(Layer incomingLayer, List<List<double>> initialWages, Bias bias = null) : base(initialWages.Count, bias)
             {
-
-                //foreach (var incomingNeuron in incomingLayer.Neurons)
-                //{
-                //    incomingLayerTuple.Add(new Tuple<Neuron, double>(incomingNeuron, initialWage));
-                //}
                 for (int i = 0; i < neurons.Count; i++)
                 {
                     incomingLayerTuple = new List<Tuple<Neuron, double>>();

@@ -34,8 +34,8 @@ namespace SimpleMLP
 
             private bool isSynced = false;
             private double initialValue;
-            private List<Tuple<INeuron, double>> predecessors = new List<Tuple<INeuron, double>>();
-            private double calculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Item1.Output * t.Item2);
+            private Dictionary<INeuron, double> predecessors = new Dictionary<INeuron, double>();
+            private double calculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Key.Output * t.Value);
             // activationFunction
             private double activate(double val) => 1 / (1 + Math.Exp(-val));
 
@@ -43,7 +43,18 @@ namespace SimpleMLP
             {
                 foreach (var incomingNeuronTuple in incomingNeurons)
                 {
-                    predecessors.Add(incomingNeuronTuple);
+                    predecessors.Add(incomingNeuronTuple.Item1, incomingNeuronTuple.Item2);
+                }
+            }
+            
+            public void AlterWeight(double delta)
+            {
+                var o = this.Output;
+                var d = delta * o * (1 - o);
+                foreach(var val in this.predecessors.Keys)
+                {
+                    
+                    this.predecessors[val] -= this.predecessors[val] * d;
                 }
             }
         }

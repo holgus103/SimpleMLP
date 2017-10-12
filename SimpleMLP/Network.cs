@@ -50,7 +50,7 @@ namespace SimpleMLP
 
         public void Train()
         {
-            // TODO: everything, kek
+            
         }
 
         public List<double> Predict(List<double> inputs)

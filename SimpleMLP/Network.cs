@@ -10,7 +10,7 @@ namespace SimpleMLP
     {
         //private Layer inputLayer;
         //private Layer outputLayer;
-        private List<Layer> layers = new List<Layer>();
+        private List<LayerBase> layers = new List<LayerBase>();
 
         public Network(int inputNeurons, int hiddenNeurons, int outputNeurons)
         {
@@ -40,9 +40,24 @@ namespace SimpleMLP
             return weights;
         }
 
+        private void calculateNetwork()
+        {
+            for(var i = 1; i < this.layers.Count; i++)
+            {
+                ((Layer)this.layers[i]).CalculateLayer();
+            }
+        }
+
         public void Train()
         {
             // TODO: everything, kek
+        }
+
+        public List<double> Predict(List<double> inputs)
+        {
+            ((InputLayer)this.layers[0]).SetInputs(inputs);
+            this.calculateNetwork();
+            return ((OutputLayer)this.layers.Last()).GetOutput();
         }
     }
 }

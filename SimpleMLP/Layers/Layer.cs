@@ -8,15 +8,11 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-        protected abstract class Layer
+        protected abstract class Layer : LayerBase
         {
-            public List<Neuron> Neurons => neurons;
-            protected List<Neuron> neurons;
-            public int Count => this.neurons.Count;
-
-            public Layer(int neuronsNumber, Bias bias = null)
+            public Layer(int neuronsNumber, Bias bias = null) : base(neuronsNumber)
             {
-                neurons = new List<Neuron>();
+                neurons = new List<INeuron>();
                 for (int i = 0; i < neuronsNumber; i++)
                 {
                     neurons.Add(new Neuron());
@@ -24,8 +20,17 @@ namespace SimpleMLP
                 if (bias != null)
                     foreach (var neuron in neurons)
                     {
-                        neuron.AddPredecessors(new List<Tuple<Neuron, double>>() { new Tuple<Neuron, double>(new Neuron(bias.Value), bias.Wage) });
+                        ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new Neuron(bias.Value), bias.Wage) });
                     }
+            }
+
+            public void CalculateLayer()
+            {
+                double o;
+                foreach (var n in this.neurons)
+                {
+                    o = n.Output;
+                }
             }
         }
     }

@@ -8,7 +8,7 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-        protected class Neuron
+        protected class Neuron : INeuron
         {
             public Neuron() { }
             public Neuron(double initialValue)
@@ -31,14 +31,15 @@ namespace SimpleMLP
                     return initialValue;
                 }
             }
+
             private bool isSynced = false;
             private double initialValue;
-            private List<Tuple<Neuron, double>> predecessors = new List<Tuple<Neuron, double>>();
+            private List<Tuple<INeuron, double>> predecessors = new List<Tuple<INeuron, double>>();
             private double calculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Item1.Output * t.Item2);
             // activationFunction
             private double activate(double val) => 1 / (1 + Math.Exp(-val));
 
-            public void AddPredecessors(List<Tuple<Neuron, double>> incomingNeurons)
+            public void AddPredecessors(List<Tuple<INeuron, double>> incomingNeurons)
             {
                 foreach (var incomingNeuronTuple in incomingNeurons)
                 {

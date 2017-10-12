@@ -8,9 +8,10 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-        public Network(int inputs, int hidden, int output)
+        class InputNeuron : INeuron
         {
-
+            public double Input { get; set; }
+            public double Output => this.Input;
         }
     }
 }

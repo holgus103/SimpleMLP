@@ -8,9 +8,10 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-        public Network(int inputs, int hidden, int output)
+        interface INeuron
         {
-
+            double Output { get; }
         }
     }
+
 }

@@ -27,10 +27,9 @@ namespace SimpleMLP
 
             public void CalculateLayer()
             {
-                double o;
-                foreach (var n in this.neurons)
+                for (var i = 0; i < this.neurons.Count; i++)
                 {
-                    o = n.Output;
+                    this.getNeuron(i).CalculateNeuron();
                 }
             }
 

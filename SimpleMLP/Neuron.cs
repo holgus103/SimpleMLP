@@ -16,21 +16,7 @@ namespace SimpleMLP
                 this.initialValue = initialValue;
             }
 
-            public double Output
-            {
-                get
-                {
-                    if (predecessors.Count > 0)
-                    {
-                        if (!this.isSynced)
-                        {
-                            this.initialValue = this.initialValue = this.activate(this.calculateNetInput());
-                            this.isSynced = true;
-                        }
-                    }
-                    return initialValue;
-                }
-            }
+            public double Output => this.initialValue;
 
             public void AddToForwardDelta(double delta)
             {
@@ -38,7 +24,6 @@ namespace SimpleMLP
             }
 
             private double delta = 0;
-            private bool isSynced = false;
             private double initialValue;
             private Dictionary<INeuron, double> predecessors = new Dictionary<INeuron, double>();
             private double calculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Key.Output * t.Value);
@@ -52,17 +37,28 @@ namespace SimpleMLP
                     this.predecessors.Add(incomingNeuronTuple.Item1, incomingNeuronTuple.Item2);
                 }
             }
-            
+
             public void AlterWeights()
             {
                 var o = this.Output;
                 var d = this.delta * o * (1 - o);
-                foreach(var val in this.predecessors.Keys.ToList())
-                {
-                    val.AddToForwardDelta(this.delta * this.predecessors[val]);
-                    this.predecessors[val] -= val.Output * d;
-                }
+                var keys = this.predecessors.Keys.ToList();
+                keys.ForEach(val =>
+                    {
+                        val.AddToForwardDelta(this.delta * this.predecessors[val]);
+                        this.predecessors[val] -= val.Output * d;
+                    }
+                );
                 this.delta = 0;
+                // normalize weights
+                // I HAVE NO IDEA IF THIS IS NECESSARY
+                //var sum = this.predecessors.Values.Sum();
+                //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
+            }
+
+            public void CalculateNeuron()
+            {
+                this.initialValue = this.activate(this.calculateNetInput());
             }
         }
     }

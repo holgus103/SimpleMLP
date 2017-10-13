@@ -11,7 +11,7 @@ namespace RunNeuralNetwork
     {
         static void Main(string[] args)
         {
-            Network mlp = new Network(1);
+            Network mlp = new Network(2, 2, 2);
             Console.WriteLine("Whatever");
         }
     }

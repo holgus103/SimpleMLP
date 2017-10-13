@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleMLP", "SimpleMLP\SimpleMLP.csproj", "{D78D4243-D811-4321-9207-E1B7AD6EE732}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RunNeuralNetwork", "RunNeuralNetwork\RunNeuralNetwork.csproj", "{A9007412-3E81-42DE-949D-8D11264AE9B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{EBFEDB51-2C0B-485E-92DB-85F2F9C23116}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A9007412-3E81-42DE-949D-8D11264AE9B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9007412-3E81-42DE-949D-8D11264AE9B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9007412-3E81-42DE-949D-8D11264AE9B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBFEDB51-2C0B-485E-92DB-85F2F9C23116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBFEDB51-2C0B-485E-92DB-85F2F9C23116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBFEDB51-2C0B-485E-92DB-85F2F9C23116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBFEDB51-2C0B-485E-92DB-85F2F9C23116}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

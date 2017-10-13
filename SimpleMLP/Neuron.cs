@@ -57,7 +57,7 @@ namespace SimpleMLP
             {
                 var o = this.Output;
                 var d = this.delta * o * (1 - o);
-                foreach(var val in this.predecessors.Keys)
+                foreach(var val in this.predecessors.Keys.ToList())
                 {
                     val.AddToForwardDelta(this.delta * this.predecessors[val]);
                     this.predecessors[val] -= val.Output * d;

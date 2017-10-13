@@ -8,7 +8,6 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-
         private Layer inputLayer;
         private Layer outputLayer;
         private List<Layer> hiddenLayers;

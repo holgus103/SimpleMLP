@@ -41,12 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
-    <Compile Include="INeuron.cs" />
-    <Compile Include="InputNeuron.cs" />
-    <Compile Include="Network.cs" />
-    <Compile Include="HiddenNeuron.cs" />
-=======
     <Compile Include="Bias.cs" />
     <Compile Include="Layers\HiddenLayer.cs" />
     <Compile Include="Layers\InputLayer.cs" />
@@ -54,7 +48,6 @@
     <Compile Include="Neuron.cs" />
     <Compile Include="Layers\Layer.cs" />
     <Compile Include="Layers\OutputLayer.cs" />
->>>>>>> 89d0fd509a7e5d70647e6f0319cd477a539aede1
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

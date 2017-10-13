@@ -10,18 +10,19 @@ namespace SimpleMLP
     {
         protected abstract class Layer : LayerBase
         {
-            public Layer(int neuronsNumber, Bias bias = null) : base(neuronsNumber)
+            protected Neuron getNeuron(int index) => (Neuron) this.neurons[index];
+
+            protected Layer(int neuronsNumber, Bias bias = null) : base(neuronsNumber)
             {
-                neurons = new List<INeuron>();
                 for (int i = 0; i < neuronsNumber; i++)
                 {
-                    neurons.Add(new Neuron());
+                    this.neurons.Add(new Neuron());
                 }
-                if (bias != null)
-                    foreach (var neuron in neurons)
-                    {
-                        ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new Neuron(bias.Value), bias.Wage) });
-                    }
+                if (bias == null) return;
+                foreach (var neuron in this.neurons)
+                {
+                    ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new Neuron(bias.Value), bias.Wage) });
+                }
             }
 
             public void CalculateLayer()
@@ -31,6 +32,11 @@ namespace SimpleMLP
                 {
                     o = n.Output;
                 }
+            }
+
+            public override void AlterWeights()
+            {
+                this.neurons.ForEach(n => n.AlterWeights());
             }
         }
     }

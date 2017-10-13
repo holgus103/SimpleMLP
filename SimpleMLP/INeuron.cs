@@ -11,6 +11,8 @@ namespace SimpleMLP
         protected interface INeuron
         {
             double Output { get; }
+            void AlterWeights();
+            void AddToForwardDelta(double delta);
         }
     }
 

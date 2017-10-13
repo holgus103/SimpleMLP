@@ -32,6 +32,12 @@ namespace SimpleMLP
                 }
             }
 
+            public void AddToForwardDelta(double delta)
+            {
+                this.delta += delta;
+            }
+
+            private double delta = 0;
             private bool isSynced = false;
             private double initialValue;
             private Dictionary<INeuron, double> predecessors = new Dictionary<INeuron, double>();
@@ -43,19 +49,20 @@ namespace SimpleMLP
             {
                 foreach (var incomingNeuronTuple in incomingNeurons)
                 {
-                    predecessors.Add(incomingNeuronTuple.Item1, incomingNeuronTuple.Item2);
+                    this.predecessors.Add(incomingNeuronTuple.Item1, incomingNeuronTuple.Item2);
                 }
             }
             
-            public void AlterWeight(double delta)
+            public void AlterWeights()
             {
                 var o = this.Output;
-                var d = delta * o * (1 - o);
+                var d = this.delta * o * (1 - o);
                 foreach(var val in this.predecessors.Keys)
                 {
-                    
-                    this.predecessors[val] -= this.predecessors[val] * d;
+                    val.AddToForwardDelta(this.delta * this.predecessors[val]);
+                    this.predecessors[val] -= val.Output * d;
                 }
+                this.delta = 0;
             }
         }
     }

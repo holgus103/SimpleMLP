@@ -18,6 +18,11 @@ namespace SimpleMLP
             {
                 this.neurons = new List<INeuron>(count);
             }
+
+            public virtual void AlterWeights()
+            {
+                
+            }
         }
     }
 }

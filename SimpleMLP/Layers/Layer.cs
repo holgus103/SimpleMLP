@@ -21,7 +21,7 @@ namespace SimpleMLP
                 if (bias == null) return;
                 foreach (var neuron in this.neurons)
                 {
-                    ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new Neuron(bias.Value), bias.Wage) });
+                    ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new InputNeuron(bias.Value), bias.Wage) });
                 }
             }
 

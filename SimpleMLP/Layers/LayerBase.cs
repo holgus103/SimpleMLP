@@ -33,6 +33,8 @@ namespace SimpleMLP
                 public void AddToForwardDelta(double delta)
                 {
                 }
+
+                public double CalculateNewWeight(double d, double weight) => weight;
             }
 
             public List<INeuron> Neurons => neurons;

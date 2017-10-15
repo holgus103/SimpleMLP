@@ -46,7 +46,7 @@ namespace SimpleMLP
                 keys.ForEach(val =>
                     {
                         val.AddToForwardDelta(this.delta * eta * this.predecessors[val]);
-                        this.predecessors[val] -= val.Output * d;
+                        this.predecessors[val] -= val.CalculateNewWeight(d, this.predecessors[val]);
                     }
                 );
                 this.delta = 0;
@@ -56,10 +56,10 @@ namespace SimpleMLP
                 //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
             }
 
-            public void CalculateNeuron()
-            {
-                this.initialValue = this.activate(this.calculateNetInput());
-            }
+            public void CalculateNeuron() => this.initialValue = this.activate(this.calculateNetInput());
+
+            public double CalculateNewWeight(double delta, double weight) => weight - (weight* this.delta * this.Output);
+
         }
     }
 

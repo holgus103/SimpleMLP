@@ -127,7 +127,7 @@ namespace Tests
             var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
 
             var n = new Network(2, 9, 3, 1);
-            n.Train(trainData, 1000);
+            n.Train(trainData, 100);
             var correct = 0;
             testData.ForEach(e =>
             {

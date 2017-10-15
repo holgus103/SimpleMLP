@@ -54,6 +54,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataParser\DataParser.csproj">
+      <Project>{9fd4019e-94c8-4854-92ba-f1d6d95a7bd8}</Project>
+      <Name>DataParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SimpleMLP\SimpleMLP.csproj">
       <Project>{d78d4243-d811-4321-9207-e1b7ad6ee732}</Project>
       <Name>SimpleMLP</Name>

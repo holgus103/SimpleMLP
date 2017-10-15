@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleMLP;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using DataParser;
 
 namespace Tests
@@ -109,7 +110,7 @@ namespace Tests
         [TestMethod]
         public void ParserTest()
         {
-            var data = CsvParser.Parse("./../../in.txt");
+            var data = CsvParser.Parse("./../../in.txt", 1);
             Assert.AreEqual(data.Count, 3);
             CollectionAssert.AreEqual(new double[]{1,1},data[0].Item1);
             CollectionAssert.AreEqual(new double[]{1},data[0].Item2);
@@ -119,6 +120,38 @@ namespace Tests
             CollectionAssert.AreEqual(new double[]{1},data[2].Item2);
         }
 
+        [TestMethod]
+        public void MainTest()
+        {
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
 
+            var n = new Network(2, 9, 3);
+            n.Train(trainData, 1000);
+            var correct = 0;
+            testData.ForEach(e =>
+            {
+                var d = n.Predict(e.Item1);
+                if (this.getClass(d) == this.getClass(e.Item2))
+                {
+                    correct++;
+                }
+            } );
+        }
+
+        private int getClass(List<double> res)
+        {
+            double max = res[0];
+            int index = 0;
+            for (var i = 0; i < res.Count; i++)
+            {
+                if (max < res[i])
+                {
+                    max = res[i];
+                    index = i;
+                }
+            }
+            return index;
+        }
     }
 }

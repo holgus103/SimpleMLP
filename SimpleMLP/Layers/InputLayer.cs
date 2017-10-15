@@ -10,30 +10,6 @@ namespace SimpleMLP
     {
         private class InputLayer : LayerBase
         {
-            private class InputNeuronBase : INeuron
-            {
-                private double value;
-
-                public InputNeuronBase(double val)
-                {
-                    this.value = val;
-                }
-                public double Output => this.value;
-
-                public void Set(double val)
-                {
-                    this.value = val;
-                }
-
-                public void AlterWeights()
-                {
-                }
-
-                public void AddToForwardDelta(double delta)
-                {
-                }
-            }
-
             public InputLayer(int neuronsNumber) : this(Enumerable.Repeat<double>(0, neuronsNumber).ToList())
             {
                 
@@ -43,7 +19,7 @@ namespace SimpleMLP
             {
                 for(var i = 0; i< initialValues.Count; i++)
                 {
-                    this.neurons.Add(new InputNeuronBase(initialValues[i]));
+                    this.neurons.Add(new InputNeuron(initialValues[i]));
                 }
 
             }
@@ -57,7 +33,7 @@ namespace SimpleMLP
 
                 for (var i = 0; i < inputs.Count; i++)
                 {
-                    ((InputNeuronBase)this.neurons[i]).Set(inputs[i]);
+                    ((InputNeuron)this.neurons[i]).Set(inputs[i]);
                 }
             }
         }

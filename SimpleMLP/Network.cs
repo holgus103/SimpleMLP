@@ -8,12 +8,14 @@ namespace SimpleMLP
 {
     public partial class Network
     {
+        private double eta;
         private List<LayerBase> layers = new List<LayerBase>();
         private InputLayer inputLayer => (InputLayer) this.layers[0];
         private OutputLayer outputLayer => (OutputLayer) this.layers.Last();
 
-        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons)
+        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double eta)
         {
+            this.eta = eta;
             var rand = new Random();
             this.layers.Add(new InputLayer(inputNeurons));
             this.layers.Add(new HiddenLayer(this.layers[0], this.createWeightLists(this.layers[0].Count, hiddenNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
@@ -68,7 +70,7 @@ namespace SimpleMLP
             this.outputLayer.BackpropagateError(desiredOutputs);
             for (var i = this.layers.Count - 1; i > 0; i--)
             {
-                this.layers[i].AlterWeights();
+                this.layers[i].AlterWeights(this.eta);
             }
         }
 

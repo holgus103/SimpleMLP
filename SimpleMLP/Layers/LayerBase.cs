@@ -10,6 +10,31 @@ namespace SimpleMLP
     {
         protected abstract class LayerBase
         {
+
+            protected class InputNeuron : INeuron
+            {
+                private double value;
+
+                public InputNeuron(double val)
+                {
+                    this.value = val;
+                }
+                public double Output => this.value;
+
+                public void Set(double val)
+                {
+                    this.value = val;
+                }
+
+                public void AlterWeights(double eta)
+                {
+                }
+
+                public void AddToForwardDelta(double delta)
+                {
+                }
+            }
+
             public List<INeuron> Neurons => neurons;
             protected List<INeuron> neurons;
             public int Count => this.neurons.Count;
@@ -19,7 +44,7 @@ namespace SimpleMLP
                 this.neurons = new List<INeuron>(count);
             }
 
-            public virtual void AlterWeights()
+            public virtual void AlterWeights(double eta)
             {
                 
             }

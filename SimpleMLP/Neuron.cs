@@ -38,14 +38,14 @@ namespace SimpleMLP
                 }
             }
 
-            public void AlterWeights()
+            public void AlterWeights(double eta)
             {
                 var o = this.Output;
-                var d = this.delta * o * (1 - o);
+                var d = this.delta * o * (1 - o) * eta;
                 var keys = this.predecessors.Keys.ToList();
                 keys.ForEach(val =>
                     {
-                        val.AddToForwardDelta(this.delta * this.predecessors[val]);
+                        val.AddToForwardDelta(this.delta * eta * this.predecessors[val]);
                         this.predecessors[val] -= val.Output * d;
                     }
                 );

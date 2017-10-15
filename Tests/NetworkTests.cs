@@ -15,7 +15,7 @@ namespace Tests
         [TestMethod]
         public void XorTest()
         {
-            Network n = new Network(2, 4, 1);
+            Network n = new Network(2, 4, 1, 1);
             n.Train(new List<Tuple<List<double>, List<double>>>()
             {
                 new Tuple<List<double>, List<double>>(
@@ -76,7 +76,7 @@ namespace Tests
                 )
             }
            , 1000);
-            
+
             var ans = n.Predict(new List<double>()
             {
                 1,
@@ -110,14 +110,14 @@ namespace Tests
         [TestMethod]
         public void ParserTest()
         {
-            var data = CsvParser.Parse("./../../in.txt", 1);
+            var data = CsvParser.Parse("./../../in.txt", 3);
             Assert.AreEqual(data.Count, 3);
-            CollectionAssert.AreEqual(new double[]{1,1},data[0].Item1);
-            CollectionAssert.AreEqual(new double[]{1},data[0].Item2);
-            CollectionAssert.AreEqual(new double[]{2,1},data[1].Item1);
-            CollectionAssert.AreEqual(new double[]{1},data[1].Item2);
-            CollectionAssert.AreEqual(new double[]{2,3},data[2].Item1);
-            CollectionAssert.AreEqual(new double[]{1},data[2].Item2);
+            CollectionAssert.AreEqual(new double[] { 1, 1 }, data[0].Item1);
+            CollectionAssert.AreEqual(new double[] { 1, 0, 0 }, data[0].Item2);
+            CollectionAssert.AreEqual(new double[] { 2, 1 }, data[1].Item1);
+            CollectionAssert.AreEqual(new double[] { 1, 0, 0 }, data[1].Item2);
+            CollectionAssert.AreEqual(new double[] { 2, 3 }, data[2].Item1);
+            CollectionAssert.AreEqual(new double[] { 1, 0, 0 }, data[2].Item2);
         }
 
         [TestMethod]
@@ -126,7 +126,7 @@ namespace Tests
             var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
             var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
 
-            var n = new Network(2, 9, 3);
+            var n = new Network(2, 9, 3, 1);
             n.Train(trainData, 1000);
             var correct = 0;
             testData.ForEach(e =>
@@ -136,7 +136,7 @@ namespace Tests
                 {
                     correct++;
                 }
-            } );
+            });
         }
 
         private int getClass(List<double> res)

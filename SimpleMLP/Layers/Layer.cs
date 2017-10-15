@@ -27,15 +27,12 @@ namespace SimpleMLP
 
             public void CalculateLayer()
             {
-                for (var i = 0; i < this.neurons.Count; i++)
-                {
-                    this.getNeuron(i).CalculateNeuron();
-                }
+                Parallel.For(0, this.neurons.Count, i => this.getNeuron(i).CalculateNeuron());
             }
 
-            public override void AlterWeights()
+            public override void AlterWeights(double eta)
             {
-                this.neurons.ForEach(n => n.AlterWeights());
+                this.neurons.ForEach(n => n.AlterWeights(eta));
             }
         }
     }

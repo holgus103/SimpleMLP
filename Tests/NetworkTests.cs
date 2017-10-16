@@ -132,26 +132,12 @@ namespace Tests
             testData.ForEach(e =>
             {
                 var d = n.Predict(e.Item1);
-                if (this.getClass(d) == this.getClass(e.Item2))
+                if (n.GetClass(d) == n.GetClass(e.Item2))
                 {
                     correct++;
                 }
             });
         }
 
-        private int getClass(List<double> res)
-        {
-            double max = res[0];
-            int index = 0;
-            for (var i = 0; i < res.Count; i++)
-            {
-                if (max < res[i])
-                {
-                    max = res[i];
-                    index = i;
-                }
-            }
-            return index;
-        }
     }
 }

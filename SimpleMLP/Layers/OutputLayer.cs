@@ -13,6 +13,11 @@ namespace SimpleMLP
             public OutputLayer(LayerBase incomingLayer, List<List<double>> initialWages, Bias bias = null) : base(incomingLayer, initialWages, bias) { }
 
             public List<double> GetOutput() => this.neurons.Select(n => n.Output).ToList();
+            public double GetTotalError(List<double> desiredOutputs) => 
+                this.neurons
+                .Zip(desiredOutputs, (f, s) => (f.Output - s) * (f.Output - s))
+                .Sum() / this.neurons.Count;                
+            
         }
     }
 }

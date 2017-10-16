@@ -51,8 +51,10 @@ namespace SimpleMLP
             }
         }
 
-        public void Train(List<Tuple<List<double>, List<double>>> trainSet, int iterations)
+        public List<double> Train(List<Tuple<List<double>, List<double>>> trainSet, int iterations)
         {
+            var errors = new List<double>(iterations);
+            var last = trainSet.Last();
             for (var i = 0; i < iterations; i++)
             {
                 trainSet.ForEach(
@@ -63,11 +65,15 @@ namespace SimpleMLP
                         this.backpropagageError(e.Item2);
                     }
                 );
+
+                errors.Add(this.outputLayer.GetTotalError(last.Item2));
             }
+            return errors;
         }
 
         private void backpropagageError(List<double> desiredOutputs)
         {
+
             this.outputLayer.BackpropagateError(desiredOutputs);
             for (var i = this.layers.Count - 1; i > 0; i--)
             {
@@ -81,5 +87,21 @@ namespace SimpleMLP
             this.calculateNetwork();
             return this.outputLayer.GetOutput();
         }
+
+        public int GetClass(List<double> res)
+        {
+            double max = res[0];
+            int index = 0;
+            for (var i = 0; i < res.Count; i++)
+            {
+                if (max < res[i])
+                {
+                    max = res[i];
+                    index = i;
+                }
+            }
+            return index;
+        }
+
     }
 }

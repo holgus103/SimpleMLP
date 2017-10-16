@@ -37,12 +37,20 @@ namespace MlpGui
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
             this.network = new Network(2, 4, 3, 2, 1);
-            var t = new Task(() =>
-            {
-                this.network.Train(trainSet, 1000);
-                    // TODO: update GUI
-            });
-            t.Start();
+            //var t = new Task(() =>
+            //{
+            var errors = this.network.Train(trainSet, 1000);
+            this.drawChart
+            (
+                new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, 1000).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
+                1,
+                1000,
+                errors.Min(),
+                errors.Max()
+            );
+            // TODO: update GUI
+            //});
+            //t.Start();
 
         }
 
@@ -59,13 +67,28 @@ namespace MlpGui
             var resX = new List<double>(testSet.Count);
             var resY = new List<double>(testSet.Count);
             // TODO: classification
+
+            var lowX = testSet.Min(x => x.Item1[0]);
+            var highX = testSet.Max(x => x.Item1[0]);
+            var lowY = testSet.Min(x => x.Item1[1]);
+            var highY = testSet.Max(x => x.Item1[1]);
             this.drawChart
             (
-                testSet.GroupBy(x => x.Item2.IndexOf(1.0)),
-                testSet.Min(x => x.Item1[0]),
-                testSet.Max(x => x.Item1[0]),
-                testSet.Min(x => x.Item1[1]),
-                testSet.Max(x => x.Item1[1])
+                testSet.GroupBy(x => x.Item2.IndexOf(1.0)).Select(g => g.Select(x => new Tuple<double, double>(x.Item1[0], x.Item1[1]))),
+                lowX,
+                highX,
+                lowY,
+                highY
+            );
+
+            this.drawChart(
+                testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = this.network.GetClass(this.network.Predict(x.Item1)) })
+                    .GroupBy(x => x.cls)
+                    .Select(x => x.Select(y => new Tuple<double, double>(y.x, y.y))),
+                lowX,
+                highX,
+                lowY,
+                highY
             );
 
         }
@@ -82,13 +105,14 @@ namespace MlpGui
             return null;
         }
 
-        private void drawChart(IEnumerable<IGrouping<int, Tuple<List<double>, List<double>>>> data, double lowX, double highX, double lowY, double highY)
+        private void drawChart(IEnumerable<IEnumerable<Tuple<double, double>>> data, double lowX, double highX, double lowY, double highY)
         {
             if (data.Count() == 0) return;
             var colorIndex = 0;
             var colors = new[] { "red", "green", "blue", "yellow" };
             REngine.SetEnvironmentVariables();
             var engine = REngine.GetInstance();
+            engine.Evaluate("dev.new()");
             engine.SetSymbol("lowX", engine.CreateNumeric(lowX));
             engine.SetSymbol("highX", engine.CreateNumeric(highX));
             engine.SetSymbol("lowY", engine.CreateNumeric(lowY));
@@ -97,9 +121,9 @@ namespace MlpGui
             foreach (var val in data)
             {
                 // get xs
-                engine.SetSymbol("x", engine.CreateNumericVector(val.Select(e => e.Item1[0])));
+                engine.SetSymbol("x", engine.CreateNumericVector(val.Select(e => e.Item1)));
                 // get ys
-                engine.SetSymbol("y", engine.CreateNumericVector(val.Select(e => e.Item1[1])));
+                engine.SetSymbol("y", engine.CreateNumericVector(val.Select(e => e.Item2)));
                 engine.SetSymbol("color", engine.CreateCharacterVector(new[] { colors[colorIndex % colors.Length] }));
                 engine.Evaluate("points(x, y, col = color)");
                 colorIndex++;

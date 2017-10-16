@@ -43,15 +43,18 @@ namespace MlpGui
                {
                    var errors = this.network.Train(trainSet, 1000);
 
-                   this.drawChart
-                   (
-                       new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, 1000).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
-                       1,
-                       1000,
-                       errors.Min(),
-                       errors.Max()
-                   );
-                   tb.Dispatcher.Invoke(() => DialogHost.CloseDialogCommand.Execute(null, tb));
+                   tb.Dispatcher.Invoke(() =>
+                   {
+                        this.drawChart
+                        (
+                            new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, 1000).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
+                            1,
+                            1000,
+                            errors.Min(),
+                            errors.Max()
+                        );
+                       DialogHost.CloseDialogCommand.Execute(null, tb);
+                   });
                });
 
             // TODO: update GUI

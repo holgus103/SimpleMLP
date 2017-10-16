@@ -46,7 +46,7 @@ namespace SimpleMLP
                 keys.ForEach(val =>
                     {
                         val.AddToForwardDelta(this.delta * eta * this.predecessors[val]);
-                        this.predecessors[val] = val.CalculateNewWeight(d, this.predecessors[val], momentum);
+                        this.predecessors[val] -= d * val.Output;//val.CalculateNewWeight(d, this.predecessors[val], momentum);
                     }
                 );
                 this.delta = 0;

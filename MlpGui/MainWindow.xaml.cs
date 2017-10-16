@@ -17,6 +17,7 @@ using DataParser;
 using SimpleMLP;
 using MaterialDesignThemes.Wpf;
 using RDotNet;
+using System.Threading;
 
 namespace MlpGui
 {
@@ -36,29 +37,34 @@ namespace MlpGui
             var trainSet = this.getSetFromFile();
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network(2, 4, 3, 2, 1);
-            //var t = new Task(() =>
-            //{
-            var errors = this.network.Train(trainSet, 1000);
-            this.drawChart
-            (
-                new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, 1000).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
-                1,
-                1000,
-                errors.Min(),
-                errors.Max()
-            );
+            this.network = new Network(2, 9, 3, 2, 1);
+            var tb = showWaitingDialog();
+            Task.Run(() =>
+               {
+                   var errors = this.network.Train(trainSet, 1000);
+
+                   this.drawChart
+                   (
+                       new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, 1000).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
+                       1,
+                       1000,
+                       errors.Min(),
+                       errors.Max()
+                   );
+                   tb.Dispatcher.Invoke(() => DialogHost.CloseDialogCommand.Execute(null, tb));
+               });
+
             // TODO: update GUI
-            //});
-            //t.Start();
+
 
         }
 
-        private static void showWaitingDialog()
+        private static TextBox showWaitingDialog()
         {
             var t = new TextBox();
             t.Text = "Please wait, the model is being trained!";
             DialogHost.Show(t);
+            return t;
         }
 
         private void testBtnClick(object sender, RoutedEventArgs e)

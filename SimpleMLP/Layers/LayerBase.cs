@@ -26,7 +26,7 @@ namespace SimpleMLP
                     this.value = val;
                 }
 
-                public void AlterWeights(double eta)
+                public void AlterWeights(double eta, double momentum)
                 {
                 }
 
@@ -34,7 +34,7 @@ namespace SimpleMLP
                 {
                 }
 
-                public double CalculateNewWeight(double d, double weight) => weight;
+                public double CalculateNewWeight(double d, double weight, double mometum) => weight;
             }
 
             public List<INeuron> Neurons => neurons;
@@ -46,7 +46,7 @@ namespace SimpleMLP
                 this.neurons = new List<INeuron>(count);
             }
 
-            public virtual void AlterWeights(double eta)
+            public virtual void AlterWeights(double eta, double momentum)
             {
                 
             }

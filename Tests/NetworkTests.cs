@@ -15,7 +15,7 @@ namespace Tests
         [TestMethod]
         public void XorTest()
         {
-            Network n = new Network(2, 4, 1, 1);
+            Network n = new Network(2, 4, 1, 1, 1);
             n.Train(new List<Tuple<List<double>, List<double>>>()
             {
                 new Tuple<List<double>, List<double>>(
@@ -126,7 +126,7 @@ namespace Tests
             var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
             var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
 
-            var n = new Network(2, 9, 3, 1);
+            var n = new Network(2, 9, 3, 1, 1);
             n.Train(trainData, 100);
             var correct = 0;
             testData.ForEach(e =>

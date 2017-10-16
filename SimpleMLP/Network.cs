@@ -9,11 +9,12 @@ namespace SimpleMLP
     public partial class Network
     {
         private double eta;
+        private double momentum;
         private List<LayerBase> layers = new List<LayerBase>();
         private InputLayer inputLayer => (InputLayer) this.layers[0];
         private OutputLayer outputLayer => (OutputLayer) this.layers.Last();
 
-        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double eta)
+        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double eta, double momentum)
         {
             this.eta = eta;
             var rand = new Random();
@@ -70,7 +71,7 @@ namespace SimpleMLP
             this.outputLayer.BackpropagateError(desiredOutputs);
             for (var i = this.layers.Count - 1; i > 0; i--)
             {
-                this.layers[i].AlterWeights(this.eta);
+                this.layers[i].AlterWeights(this.eta, this.momentum);
             }
         }
 

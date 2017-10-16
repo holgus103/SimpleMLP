@@ -10,7 +10,7 @@ namespace SimpleMLP
     {
         protected abstract class Layer : LayerBase
         {
-            protected Neuron getNeuron(int index) => (Neuron) this.neurons[index];
+            protected Neuron getNeuron(int index) => (Neuron)this.neurons[index];
 
             protected Layer(int neuronsNumber, Bias bias = null) : base(neuronsNumber)
             {
@@ -27,12 +27,15 @@ namespace SimpleMLP
 
             public void CalculateLayer()
             {
-                Parallel.For(0, this.neurons.Count, i => this.getNeuron(i).CalculateNeuron());
+                for (var i = 0; i < this.neurons.Count; i++)
+                {
+                    this.getNeuron(i).CalculateNeuron();
+                }
             }
 
-            public override void AlterWeights(double eta)
+            public override void AlterWeights(double eta, double momentum)
             {
-                this.neurons.ForEach(n => n.AlterWeights(eta));
+                this.neurons.ForEach(n => n.AlterWeights(eta, momentum));
             }
         }
     }

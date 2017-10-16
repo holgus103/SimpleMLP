@@ -39,7 +39,7 @@ namespace MlpGui
                 // TODO: ask user for classes count
                 var trainSet = CsvParser.Parse(dlg.FileName, 3);
                 // TODO: permit user to model network and edit parameters
-                this.network = new Network(2, 4, 3, 2);
+                this.network = new Network(2, 4, 3, 2, 1);
                 var t = new Task(() =>
                 {
                     this.network.Train(trainSet, 1000);

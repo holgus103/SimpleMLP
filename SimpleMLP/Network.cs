@@ -17,13 +17,14 @@ namespace SimpleMLP
         public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double eta, double momentum)
         {
             this.eta = eta;
+            this.momentum = momentum;
             var rand = new Random();
             this.layers.Add(new InputLayer(inputNeurons));
-            this.layers.Add(new HiddenLayer(this.layers[0], this.createWeightLists(this.layers[0].Count, hiddenNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
-            this.layers.Add(new OutputLayer(this.layers[1], this.createWeightLists(this.layers[1].Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            this.layers.Add(new HiddenLayer(this.layers[0], this.CreateWeightLists(this.layers[0].Count, hiddenNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            this.layers.Add(new OutputLayer(this.layers[1], this.CreateWeightLists(this.layers[1].Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
         }
 
-        private List<List<double>> createWeightLists(int prev, int current)
+        private List<List<double>> CreateWeightLists(int prev, int current)
         {
             // prepare list
             List<List<double>> weights = new List<List<double>>(current);
@@ -43,7 +44,7 @@ namespace SimpleMLP
             return weights;
         }
 
-        private void calculateNetwork()
+        private void CalculateNetwork()
         {
             for(var i = 1; i < this.layers.Count; i++)
             {
@@ -61,8 +62,8 @@ namespace SimpleMLP
                     e =>
                     {
                         this.inputLayer.SetInputs(e.Item1);
-                        this.calculateNetwork();
-                        this.backpropagageError(e.Item2);
+                        this.CalculateNetwork();
+                        this.BackpropagationError(e.Item2);
                     }
                 );
 
@@ -71,7 +72,7 @@ namespace SimpleMLP
             return errors;
         }
 
-        private void backpropagageError(List<double> desiredOutputs)
+        private void BackpropagationError(List<double> desiredOutputs)
         {
 
             this.outputLayer.BackpropagateError(desiredOutputs);
@@ -84,7 +85,7 @@ namespace SimpleMLP
         public List<double> Predict(List<double> inputs)
         {
             this.inputLayer.SetInputs(inputs);
-            this.calculateNetwork();
+            this.CalculateNetwork();
             return this.outputLayer.GetOutput();
         }
 

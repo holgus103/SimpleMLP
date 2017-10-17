@@ -41,7 +41,7 @@ namespace MlpGui
             this.engine.Dispose();
         }
 
-        private void trainBtnClick(object sender, RoutedEventArgs e)
+        private void TrainBtnClick(object sender, RoutedEventArgs e)
         {
             double eta;
             double alpha;
@@ -53,24 +53,24 @@ namespace MlpGui
             if (!Double.TryParse(this.AlphaTb.Text, out alpha)) return;
             if (!Int32.TryParse(this.HiddenNeuronsTb.Text, out hiddenNeurons)) return;
             if (!Int32.TryParse(this.IterationsTb.Text, out iterations)) return;
-            var trainSet = this.getSetFromFile(out classesCount, out attributesCount);
+            var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
             this.network = new Network(attributesCount, hiddenNeurons, classesCount, eta, alpha);
-            var tb = showWaitingDialog();
+            var tb = ShowWaitingDialog();
             Task.Run(() =>
                {
                    var errors = this.network.Train(trainSet, iterations);
 
                    tb.Dispatcher.Invoke(() =>
                    {
-                       this.drawChart
+                       this.DrawChart
                        (
                            new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, iterations).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
                            1,
                            iterations,
                            errors.Min(),
-                           errors.Max()
+                           errors.Max()/1000
                        );
                        DialogHost.CloseDialogCommand.Execute(null, tb);
                    });
@@ -81,7 +81,7 @@ namespace MlpGui
 
         }
 
-        private static TextBox showWaitingDialog()
+        private static TextBox ShowWaitingDialog()
         {
             var t = new TextBox();
             t.Text = "Please wait, the model is being trained!";
@@ -89,10 +89,12 @@ namespace MlpGui
             return t;
         }
 
-        private void testBtnClick(object sender, RoutedEventArgs e)
+        private void TestBtnClick(object sender, RoutedEventArgs e)
         {
             int classesCount, attributesCount;
-            var testSet = this.getSetFromFile(out classesCount, out attributesCount);
+            var testSet = this.GetSetFromFile(out classesCount, out attributesCount);
+            if (testSet is null)
+                return;
             var resX = new List<double>(testSet.Count);
             var resY = new List<double>(testSet.Count);
 
@@ -100,7 +102,7 @@ namespace MlpGui
             var highX = testSet.Max(x => x.Item1[0]);
             var lowY = testSet.Min(x => x.Item1[1]);
             var highY = testSet.Max(x => x.Item1[1]);
-            this.drawChart
+            this.DrawChart
             (
                 testSet.GroupBy(x => x.Item2.IndexOf(1.0)).Select(g => g.Select(x => new Tuple<double, double>(x.Item1[0], x.Item1[1]))),
                 lowX,
@@ -109,8 +111,8 @@ namespace MlpGui
                 highY
             );
 
-            var data = testSet.Select(x => new {x = x.Item1[0], y = x.Item1[1], cls = this.network.GetClass(this.network.Predict(x.Item1))});
-            this.drawChart(
+            var data = testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = this.network.GetClass(this.network.Predict(x.Item1)) });
+            this.DrawChart(
                 data.GroupBy(x => x.cls)
                     .Select(x => x.Select(y => new Tuple<double, double>(y.x, y.y))),
                 lowX,
@@ -121,7 +123,7 @@ namespace MlpGui
 
         }
 
-        private List<Tuple<List<double>, List<double>>> getSetFromFile(out int classesCount, out int attributesCount)
+        private List<Tuple<List<double>, List<double>>> GetSetFromFile(out int classesCount, out int attributesCount)
         {
             OpenFileDialog dlg = new OpenFileDialog();
             if (dlg.ShowDialog() == true)
@@ -134,7 +136,7 @@ namespace MlpGui
             return null;
         }
 
-        private void drawChart(IEnumerable<IEnumerable<Tuple<double, double>>> data, double lowX, double highX, double lowY, double highY)
+        private void DrawChart(IEnumerable<IEnumerable<Tuple<double, double>>> data, double lowX, double highX, double lowY, double highY)
         {
             if (data.Count() == 0) return;
             var colorIndex = 0;

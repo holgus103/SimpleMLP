@@ -10,7 +10,7 @@ namespace SimpleMLP
     {
         protected abstract class Layer : LayerBase
         {
-            protected Neuron getNeuron(int index) => (Neuron)this.neurons[index];
+            protected Neuron GetNeuron(int index) => (Neuron)this.neurons[index];
 
             protected Layer(int neuronsNumber, Bias bias = null) : base(neuronsNumber)
             {
@@ -29,7 +29,7 @@ namespace SimpleMLP
             {
                 for (var i = 0; i < this.neurons.Count; i++)
                 {
-                    this.getNeuron(i).CalculateNeuron();
+                    this.GetNeuron(i).CalculateNeuron();
                 }
             }
 

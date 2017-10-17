@@ -26,9 +26,9 @@ namespace SimpleMLP
             private double delta = 0;
             private double initialValue;
             private Dictionary<INeuron, double> predecessors = new Dictionary<INeuron, double>();
-            private double calculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Key.Output * t.Value);
+            private double CalculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Key.Output * t.Value);
             // activationFunction
-            private double activate(double val) => 1 / (1 + Math.Exp(-val));
+            private double Activate(double val) => 1 / (1 + Math.Exp(-val));
 
             public void AddPredecessors(List<Tuple<INeuron, double>> incomingNeurons)
             {
@@ -56,7 +56,7 @@ namespace SimpleMLP
                 //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
             }
 
-            public void CalculateNeuron() => this.initialValue = this.activate(this.calculateNetInput());
+            public void CalculateNeuron() => this.initialValue = this.Activate(this.CalculateNetInput());
 
             public double CalculateNewWeight(double d, double weight, double momentum) => (momentum * weight) - (weight * d * this.Output);
 

@@ -27,32 +27,51 @@ namespace MlpGui
     public partial class MainWindow : Window
     {
         Network network;
+        private REngine engine;
+
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            REngine.SetEnvironmentVariables();
+            this.engine = REngine.GetInstance();
+        }
+
+        ~MainWindow()
+        {
+            this.engine.Dispose();
         }
 
         private void trainBtnClick(object sender, RoutedEventArgs e)
         {
-            var trainSet = this.getSetFromFile();
+            double eta;
+            double alpha;
+            int hiddenNeurons;
+            int iterations;
+            int classesCount;
+            int attributesCount;
+            if (!Double.TryParse(this.EtaTb.Text, out eta)) return;
+            if (!Double.TryParse(this.AlphaTb.Text, out alpha)) return;
+            if (!Int32.TryParse(this.HiddenNeuronsTb.Text, out hiddenNeurons)) return;
+            if (!Int32.TryParse(this.IterationsTb.Text, out iterations)) return;
+            var trainSet = this.getSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network(2, 9, 3, 2, 1);
+            this.network = new Network(attributesCount, hiddenNeurons, classesCount, eta, alpha);
             var tb = showWaitingDialog();
             Task.Run(() =>
                {
-                   var errors = this.network.Train(trainSet, 1000);
+                   var errors = this.network.Train(trainSet, iterations);
 
                    tb.Dispatcher.Invoke(() =>
                    {
-                        this.drawChart
-                        (
-                            new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, 1000).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
-                            1,
-                            1000,
-                            errors.Min(),
-                            errors.Max()
-                        );
+                       this.drawChart
+                       (
+                           new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, iterations).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
+                           1,
+                           iterations,
+                           errors.Min(),
+                           errors.Max()
+                       );
                        DialogHost.CloseDialogCommand.Execute(null, tb);
                    });
                });
@@ -72,10 +91,10 @@ namespace MlpGui
 
         private void testBtnClick(object sender, RoutedEventArgs e)
         {
-            var testSet = this.getSetFromFile();
+            int classesCount, attributesCount;
+            var testSet = this.getSetFromFile(out classesCount, out attributesCount);
             var resX = new List<double>(testSet.Count);
             var resY = new List<double>(testSet.Count);
-            // TODO: classification
 
             var lowX = testSet.Min(x => x.Item1[0]);
             var highX = testSet.Max(x => x.Item1[0]);
@@ -90,9 +109,9 @@ namespace MlpGui
                 highY
             );
 
+            var data = testSet.Select(x => new {x = x.Item1[0], y = x.Item1[1], cls = this.network.GetClass(this.network.Predict(x.Item1))});
             this.drawChart(
-                testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = this.network.GetClass(this.network.Predict(x.Item1)) })
-                    .GroupBy(x => x.cls)
+                data.GroupBy(x => x.cls)
                     .Select(x => x.Select(y => new Tuple<double, double>(y.x, y.y))),
                 lowX,
                 highX,
@@ -102,15 +121,16 @@ namespace MlpGui
 
         }
 
-        private List<Tuple<List<double>, List<double>>> getSetFromFile()
+        private List<Tuple<List<double>, List<double>>> getSetFromFile(out int classesCount, out int attributesCount)
         {
             OpenFileDialog dlg = new OpenFileDialog();
             if (dlg.ShowDialog() == true)
             {
                 //showWaitingDialog();
                 // TODO: ask user for classes count
-                return CsvParser.Parse(dlg.FileName, 3);
+                return CsvParser.Parse(dlg.FileName, out classesCount, out attributesCount);
             }
+            attributesCount = classesCount = 0;
             return null;
         }
 
@@ -119,14 +139,12 @@ namespace MlpGui
             if (data.Count() == 0) return;
             var colorIndex = 0;
             var colors = new[] { "red", "green", "blue", "yellow" };
-            REngine.SetEnvironmentVariables();
-            var engine = REngine.GetInstance();
-            engine.Evaluate("dev.new()");
-            engine.SetSymbol("lowX", engine.CreateNumeric(lowX));
-            engine.SetSymbol("highX", engine.CreateNumeric(highX));
-            engine.SetSymbol("lowY", engine.CreateNumeric(lowY));
-            engine.SetSymbol("highY", engine.CreateNumeric(highY));
-            engine.Evaluate($"plot(1, type=\"n\", xlab=\"X\", ylab=\"Y\", xlim=c(lowX, highX), ylim=c(lowY, highY))");
+            this.engine.Evaluate("dev.new()");
+            this.engine.SetSymbol("lowX", this.engine.CreateNumeric(lowX));
+            this.engine.SetSymbol("highX", this.engine.CreateNumeric(highX));
+            this.engine.SetSymbol("lowY", this.engine.CreateNumeric(lowY));
+            this.engine.SetSymbol("highY", this.engine.CreateNumeric(highY));
+            this.engine.Evaluate($"plot(1, type=\"n\", xlab=\"X\", ylab=\"Y\", xlim=c(lowX, highX), ylim=c(lowY, highY))");
             foreach (var val in data)
             {
                 // get xs

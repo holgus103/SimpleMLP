@@ -110,8 +110,9 @@ namespace Tests
         [TestMethod]
         public void ParserTest()
         {
-            var data = CsvParser.Parse("./../../in.txt", 3);
-            Assert.AreEqual(data.Count, 3);
+            int classesCount, attributesCount;
+            var data = CsvParser.Parse("./../../in.txt", out classesCount, out attributesCount);
+            Assert.AreEqual(data.Count, classesCount);
             CollectionAssert.AreEqual(new double[] { 1, 1 }, data[0].Item1);
             CollectionAssert.AreEqual(new double[] { 1, 0, 0 }, data[0].Item2);
             CollectionAssert.AreEqual(new double[] { 2, 1 }, data[1].Item1);
@@ -123,10 +124,11 @@ namespace Tests
         [TestMethod]
         public void MainTest()
         {
-            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
-            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", 3);
+            int classesCount, attributesCount;
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
 
-            var n = new Network(2, 9, 3, 1, 1);
+            var n = new Network(attributesCount, 9, classesCount, 1, 1);
             n.Train(trainData, 100);
             var correct = 0;
             testData.ForEach(e =>

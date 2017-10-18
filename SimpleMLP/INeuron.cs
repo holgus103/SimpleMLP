@@ -13,7 +13,6 @@ namespace SimpleMLP
             double Output { get; }
             void AlterWeights(double eta, double momentum);
             void AddToForwardDelta(double delta);
-            double CalculateNewWeight(double d, double weight, double momentum);
         }
     }
 

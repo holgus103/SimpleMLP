@@ -70,7 +70,7 @@ namespace MlpGui
                            1,
                            iterations,
                            errors.Min(),
-                           errors.Max()/1000
+                           errors.Max()
                        );
                        DialogHost.CloseDialogCommand.Execute(null, tb);
                    });

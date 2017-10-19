@@ -19,10 +19,11 @@ namespace SimpleMLP
                     this.neurons.Add(new Neuron());
                 }
                 if (bias == null) return;
-                foreach (var neuron in this.neurons)
-                {
-                    ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new InputNeuron(bias.Value), bias.Wage) });
-                }
+                //neurons.Add(new InputNeuron(bias.Value));
+                //foreach (var neuron in this.neurons)
+                //{
+                //    ((Neuron)neuron).AddPredecessors(new List<Tuple<INeuron, double>>() { new Tuple<INeuron, double>(new InputNeuron(bias.Value), bias.Wage) });
+                //}
             }
 
             public void CalculateLayer()

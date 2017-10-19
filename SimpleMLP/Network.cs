@@ -64,6 +64,7 @@ namespace SimpleMLP
                     {
                         this.inputLayer.SetInputs(e.Item1);
                         this.CalculateNetwork();
+                        sum += this.outputLayer.GetTotalError(e.Item2);
                         this.BackpropagationError(e.Item2);
                     }
                 );

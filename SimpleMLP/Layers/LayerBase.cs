@@ -34,7 +34,6 @@ namespace SimpleMLP
                 {
                 }
 
-                public double CalculateNewWeight(double d, double weight, double mometum) => weight;
             }
 
             public List<INeuron> Neurons => neurons;

@@ -16,7 +16,7 @@ namespace SimpleMLP
             public double GetTotalError(List<double> desiredOutputs) => 
                 this.neurons
                 .Zip(desiredOutputs, (f, s) => (f.Output - s) * (f.Output - s))
-                .Sum()/* / this.neurons.Count*/;                
+                .Sum() / 2;                
             
         }
     }

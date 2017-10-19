@@ -11,8 +11,8 @@ namespace SimpleMLP
         private double eta;
         private double momentum;
         private List<LayerBase> layers = new List<LayerBase>();
-        private InputLayer inputLayer => (InputLayer) this.layers[0];
-        private OutputLayer outputLayer => (OutputLayer) this.layers.Last();
+        private InputLayer inputLayer => (InputLayer)this.layers[0];
+        private OutputLayer outputLayer => (OutputLayer)this.layers.Last();
 
         public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double eta, double momentum)
         {
@@ -46,7 +46,7 @@ namespace SimpleMLP
 
         private void CalculateNetwork()
         {
-            for(var i = 1; i < this.layers.Count; i++)
+            for (var i = 1; i < this.layers.Count; i++)
             {
                 ((Layer)this.layers[i]).CalculateLayer();
             }
@@ -58,6 +58,7 @@ namespace SimpleMLP
             var last = trainSet.Last();
             for (var i = 0; i < iterations; i++)
             {
+                double sum = 0;
                 trainSet.ForEach(
                     e =>
                     {
@@ -67,7 +68,7 @@ namespace SimpleMLP
                     }
                 );
 
-                errors.Add(this.outputLayer.GetTotalError(last.Item2));
+                errors.Add(sum / trainSet.Count);
             }
             return errors;
         }

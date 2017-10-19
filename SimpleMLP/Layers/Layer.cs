@@ -33,9 +33,9 @@ namespace SimpleMLP
                 }
             }
 
-            public override void AlterWeights(double eta, double momentum)
+            public override void AlterWeights(double learningRate, double momentum)
             {
-                this.neurons.ForEach(n => n.AlterWeights(eta, momentum));
+                this.neurons.ForEach(n => n.AlterWeights(learningRate, momentum));
             }
         }
     }

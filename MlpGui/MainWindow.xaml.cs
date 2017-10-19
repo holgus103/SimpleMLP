@@ -43,20 +43,20 @@ namespace MlpGui
 
         private void TrainBtnClick(object sender, RoutedEventArgs e)
         {
-            double eta;
-            double alpha;
+            double learningRate;
+            double momentum;
             int hiddenNeurons;
             int iterations;
             int classesCount;
             int attributesCount;
-            if (!Double.TryParse(this.EtaTb.Text, out eta)) return;
-            if (!Double.TryParse(this.AlphaTb.Text, out alpha)) return;
+            if (!Double.TryParse(this.EtaTb.Text, out learningRate)) return;
+            if (!Double.TryParse(this.AlphaTb.Text, out momentum)) return;
             if (!Int32.TryParse(this.HiddenNeuronsTb.Text, out hiddenNeurons)) return;
             if (!Int32.TryParse(this.IterationsTb.Text, out iterations)) return;
             var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network(attributesCount, hiddenNeurons, classesCount, eta, alpha);
+            this.network = new Network(attributesCount, hiddenNeurons, classesCount, learningRate, momentum);
             var tb = ShowWaitingDialog();
             Task.Run(() =>
                {

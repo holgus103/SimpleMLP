@@ -13,10 +13,10 @@ namespace SimpleMLP
             public Neuron() { }
             public Neuron(double initialValue)
             {
-                this.initialValue = initialValue;
+                this.neuronOutput = initialValue;
             }
 
-            public double Output => this.initialValue;
+            public double Output => this.neuronOutput;
 
             public void AddToForwardDelta(double delta)
             {
@@ -24,7 +24,7 @@ namespace SimpleMLP
             }
 
             private double delta = 0;
-            private double initialValue;
+            private double neuronOutput;
             private Dictionary<INeuron, double> predecessors = new Dictionary<INeuron, double>();
             private double CalculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Key.Output * t.Value);
             // activationFunction
@@ -38,14 +38,14 @@ namespace SimpleMLP
                 }
             }
 
-            public void AlterWeights(double eta, double momentum)
+            public void AlterWeights(double learningRate, double momentum)
             {
                 var o = this.Output;
-                var d = this.delta * o * (1 - o) * eta;
+                var d = this.delta * o * (1 - o) * learningRate;
                 var keys = this.predecessors.Keys.ToList();
                 keys.ForEach(val =>
                     {
-                        val.AddToForwardDelta(this.delta * eta * this.predecessors[val]);
+                        val.AddToForwardDelta(this.delta * learningRate * this.predecessors[val]);
                         this.predecessors[val] -= d * val.Output;
                     }
                 );
@@ -56,7 +56,7 @@ namespace SimpleMLP
                 //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
             }
 
-            public void CalculateNeuron() => this.initialValue = this.Activate(this.CalculateNetInput());
+            public void CalculateNeuron() => this.neuronOutput = this.Activate(this.CalculateNetInput());
 
         }
     }

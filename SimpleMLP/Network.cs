@@ -8,15 +8,15 @@ namespace SimpleMLP
 {
     public partial class Network
     {
-        private double eta;
+        private double learningRate;
         private double momentum;
         private List<LayerBase> layers = new List<LayerBase>();
         private InputLayer inputLayer => (InputLayer)this.layers[0];
         private OutputLayer outputLayer => (OutputLayer)this.layers.Last();
 
-        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double eta, double momentum)
+        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double learningRate, double momentum)
         {
-            this.eta = eta;
+            this.learningRate = learningRate;
             this.momentum = momentum;
             var rand = new Random();
             this.layers.Add(new InputLayer(inputNeurons));
@@ -28,7 +28,7 @@ namespace SimpleMLP
         {
             // prepare list
             List<List<double>> weights = new List<List<double>>(current);
-            // foreach neuron in the hidden layer
+            // foreach neuron in the hidden layer -- lubię ten komentarz - Tomasz Chudzik
             for (var i = 0; i < current; i++)
             {
                 Random r = new Random();
@@ -79,7 +79,7 @@ namespace SimpleMLP
             this.outputLayer.BackpropagateError(desiredOutputs);
             for (var i = this.layers.Count - 1; i > 0; i--)
             {
-                this.layers[i].AlterWeights(this.eta, this.momentum);
+                this.layers[i].AlterWeights(this.learningRate, this.momentum);
             }
         }
 

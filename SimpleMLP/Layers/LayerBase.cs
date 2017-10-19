@@ -13,17 +13,17 @@ namespace SimpleMLP
 
             protected class InputNeuron : INeuron
             {
-                private double value;
+                private double neuronValue;
 
-                public InputNeuron(double val)
+                public InputNeuron(double neuronValue)
                 {
-                    this.value = val;
+                    this.neuronValue = neuronValue;
                 }
-                public double Output => this.value;
+                public double Output => this.neuronValue;
 
-                public void Set(double val)
+                public void Set(double neuronValue)
                 {
-                    this.value = val;
+                    this.neuronValue = neuronValue;
                 }
 
                 public void AlterWeights(double learningRate, double momentum)

@@ -110,7 +110,7 @@ namespace SimpleMLP
             return this.outputLayer.GetOutput();
         }
 
-        public int GetClass(List<double> res)
+        public static int GetClass(List<double> res)
         {
             double max = res[0];
             int index = 0;

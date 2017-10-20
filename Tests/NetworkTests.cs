@@ -5,6 +5,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using DataParser;
+using Encog.Neural.Networks;
+using Encog.Neural.Networks.Layers;
+using Encog.Engine.Network.Activation;
+using Encog.Neural.Networks.Training;
+using Encog.Neural.Networks.Training.Propagation.Resilient;
+using Encog.Neural.Data.Basic;
+using Encog.ML.Data;
+using Encog.Neural.NeuralData;
 
 namespace Tests
 {
@@ -128,18 +136,58 @@ namespace Tests
             var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
             var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
 
-            var n = new Network(attributesCount, new List<int>() { 9, 9 }, classesCount, 1, 1);
-            n.Train(trainData, 100);
+            var n = new Network(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1);
+            n.Train(trainData, 5000);
             var correct = 0;
             testData.ForEach(e =>
             {
                 var d = n.Predict(e.Item1);
-                if (n.GetClass(d) == n.GetClass(e.Item2))
+                if (Network.GetClass(d) == Network.GetClass(e.Item2))
                 {
                     correct++;
                 }
             });
         }
+
+
+        [TestMethod]
+        public void MainTestEncog()
+        {
+            int classesCount;
+            int attributesCount;
+            var epoch = 0;
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
+            var correct = 0;
+
+            var network = new BasicNetwork();
+
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 2));
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 4));
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 3));
+            network.Structure.FinalizeStructure();
+            network.Reset();
+
+            INeuralDataSet trainingSet = new BasicNeuralDataSet(trainData.Select(e => e.Item1.ToArray()).ToArray(), trainData.Select(e => e.Item2.ToArray()).ToArray());
+            ITrain train = new ResilientPropagation(network, trainingSet);
+
+            do
+            {
+                train.Iteration();
+                epoch++;
+            } while ((epoch < 5000) && (train.Error > 0.001));
+
+            foreach (IMLDataPair pair in trainingSet)
+            {
+                var output = network.Compute(pair.Input);
+                if(Network.GetClass(new List<double>(){ output[0], output[1], output[2]}) == Network.GetClass(new List<double>() { pair.Ideal[0], pair.Ideal[1], pair.Ideal[2]}))
+                {
+                    correct++;
+                }
+            }
+        }
+
+
 
         [TestMethod]
         public void InternetExampleTest()

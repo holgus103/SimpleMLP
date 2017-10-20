@@ -14,14 +14,18 @@ namespace SimpleMLP
         private InputLayer inputLayer => (InputLayer)this.layers[0];
         private OutputLayer outputLayer => (OutputLayer)this.layers.Last();
 
-        public Network(int inputNeurons, int hiddenNeurons, int outputNeurons, double learningRate, double momentum)
+        public Network(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum)
         {
             this.learningRate = learningRate;
             this.momentum = momentum;
             var rand = new Random();
             this.layers.Add(new InputLayer(inputNeurons));
-            this.layers.Add(new HiddenLayer(this.layers[0], this.CreateWeightLists(this.layers[0].Count, hiddenNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
-            this.layers.Add(new OutputLayer(this.layers[1], this.CreateWeightLists(this.layers[1].Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            for(var i = 0; i < hiddenNeurons.Count; i++)
+            {
+                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[0]), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            }
+
+            this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
         }
 
         public Network(List<List<List<double>>> wages, double learningRate, double momentum, List<double> biasWage)
@@ -29,8 +33,12 @@ namespace SimpleMLP
             this.learningRate = learningRate;
             this.momentum = momentum;
             this.layers.Add(new InputLayer(wages[0][0].Count));
-            this.layers.Add(new HiddenLayer(this.layers[0], wages[0], new Bias() { Value = 1, Wage = biasWage[0] }));
-            this.layers.Add(new OutputLayer(this.layers[1], wages[1], new Bias() { Value = 1, Wage = biasWage[1] }));
+            for(var i = 0; i< wages.Count; i++)
+            {
+                this.layers.Add(new HiddenLayer(this.layers[i], wages[i], new Bias() { Value = 1, Wage = biasWage[i] }));
+            }
+
+            //this.layers.Add(new OutputLayer(this.layers[1], wages[1], new Bias() { Value = 1, Wage = biasWage[1] }));
 
         }
 

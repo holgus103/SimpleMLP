@@ -56,7 +56,7 @@ namespace MlpGui
             var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network(attributesCount, hiddenNeurons, classesCount, learningRate, momentum);
+            this.network = new Network(attributesCount, new List<int>() { hiddenNeurons, hiddenNeurons }, classesCount, learningRate, momentum);
             var tb = ShowWaitingDialog();
             Task.Run(() =>
                {

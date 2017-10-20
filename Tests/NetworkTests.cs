@@ -141,5 +141,36 @@ namespace Tests
             });
         }
 
+        [TestMethod]
+        public void InternetExampleTest()
+        {
+            var wages = new List<List<List<double>>>()
+            {
+                new List<List<double>>()
+                {
+                    new List<double>(){ 0.15, 0.2},
+                    new List<double>(){ 0.25, 0.30}
+                },
+
+                new List<List<double>>()
+                {
+                    new List<double>(){ 0.4, 0.45},
+                    new List<double>(){ 0.5, 0.55}
+                }
+            };
+            Network testNetwork = new Network(wages,
+                learningRate:0.5, momentum: 1, biasWage: new List<double> { 0.35, 0.6 });
+            var trainSet = new List<Tuple<List<double>, List<double>>>()
+            {
+                new Tuple<List<double>, List<double>>
+                (
+                  new List<double>(){0.05, 0.1},
+                  new List<double>(){0.01, 0.99}
+                    )
+            };
+            testNetwork.Train(trainSet, 1);
+            //Assert działa tak: Puść i sprawdź wagi końcowe
+        }
+
     }
 }

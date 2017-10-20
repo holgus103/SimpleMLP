@@ -24,11 +24,22 @@ namespace SimpleMLP
             this.layers.Add(new OutputLayer(this.layers[1], this.CreateWeightLists(this.layers[1].Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
         }
 
+        public Network(List<List<List<double>>> wages, double learningRate, double momentum, List<double> biasWage)
+        {
+            this.learningRate = learningRate;
+            this.momentum = momentum;
+            this.layers.Add(new InputLayer(wages[0][0].Count));
+            this.layers.Add(new HiddenLayer(this.layers[0], wages[0], new Bias() { Value = 1, Wage = biasWage[0] }));
+            this.layers.Add(new OutputLayer(this.layers[1], wages[1], new Bias() { Value = 1, Wage = biasWage[1] }));
+
+        }
+
+
         private List<List<double>> CreateWeightLists(int prev, int current)
         {
             // prepare list
             List<List<double>> weights = new List<List<double>>(current);
-            // foreach neuron in the hidden layer -- lubię ten komentarz - Tomasz Chudzik
+            // foreach neuron in the hidden layer -- lubię ten komentarz - Tomasz Chudzik <Like>
             for (var i = 0; i < current; i++)
             {
                 Random r = new Random();

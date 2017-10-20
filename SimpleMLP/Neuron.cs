@@ -45,7 +45,7 @@ namespace SimpleMLP
                 var keys = this.predecessors.Keys.ToList();
                 keys.ForEach(val =>
                     {
-                        val.AddToForwardDelta(this.delta * learningRate * this.predecessors[val]);
+                        val.AddToForwardDelta(d * this.predecessors[val]);
                         this.predecessors[val] -= d * val.Output;
                     }
                 );

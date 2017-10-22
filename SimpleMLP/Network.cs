@@ -36,12 +36,12 @@ namespace SimpleMLP
             this.learningRate = learningRate;
             this.momentum = momentum;
             this.layers.Add(new InputLayer(wages[0][0].Count));
-            for(var i = 0; i< wages.Count; i++)
+            for(var i = 0; i< wages.Count - 1; i++)
             {
                 this.layers.Add(new HiddenLayer(this.layers[i], wages[i], new Bias() { Value = 1, Wage = biasWage[i] }));
             }
 
-            //this.layers.Add(new OutputLayer(this.layers[1], wages[1], new Bias() { Value = 1, Wage = biasWage[1] }));
+            this.layers.Add(new OutputLayer(this.layers.Last(), wages.Last(), new Bias() { Value = 1, Wage = biasWage.Last() }));
             return this;
         }
 

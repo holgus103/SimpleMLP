@@ -125,9 +125,11 @@ namespace MlpGui
                 highY
             );
 
-            var data = testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = Network.GetClass(this.network.Predict(x.Item1)) });
+            var data = testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = NetworkBase.GetClass(x.Item2), resCls = NetworkBase.GetClass(this.network.Predict(x.Item1)) });
+            var acc = data.Count(x => x.cls == x.resCls) / data.Count() * 100;
+            this.AccLbl.Content = acc.ToString();
             this.DrawChart(
-                data.GroupBy(x => x.cls)
+                data.GroupBy(x => x.resCls)
                     .Select(x => x.Select(y => new Tuple<double, double>(y.x, y.y))),
                 lowX,
                 highX,

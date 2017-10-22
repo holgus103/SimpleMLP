@@ -52,8 +52,8 @@ namespace SimpleMLP
                 this.delta = 0;
                 // normalize weights
                 // I HAVE NO IDEA IF THIS IS NECESSARY
-                //var sum = this.predecessors.Values.Sum();
-                //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
+                var sum = this.predecessors.Values.Sum();
+                keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
             }
 
             public void CalculateNeuron() => this.neuronOutput = this.Activate(this.CalculateNetInput());

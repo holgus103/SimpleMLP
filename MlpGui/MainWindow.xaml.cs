@@ -45,7 +45,6 @@ namespace MlpGui
         {
             double learningRate;
             double momentum;
-            int hiddenNeurons;
             int iterations;
             int classesCount;
             int attributesCount;

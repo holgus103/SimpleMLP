@@ -13,6 +13,7 @@ using Encog.Neural.Networks.Training.Propagation.Resilient;
 using Encog.Neural.Data.Basic;
 using Encog.ML.Data;
 using Encog.Neural.NeuralData;
+using Encog.Neural.Networks.Training.Propagation.Back;
 
 namespace Tests
 {
@@ -119,7 +120,7 @@ namespace Tests
         public void ParserTest()
         {
             int classesCount, attributesCount;
-            var data = CsvParser.Parse("./../../in.txt", out classesCount, out attributesCount);
+            var data = CsvParser.Parse("./../../in.txt", out classesCount, out attributesCount).NormalizedData;
             Assert.AreEqual(data.Count, classesCount);
             CollectionAssert.AreEqual(new double[] { 1, 1 }, data[0].Item1);
             CollectionAssert.AreEqual(new double[] { 1, 0, 0 }, data[0].Item2);
@@ -133,8 +134,8 @@ namespace Tests
         public void MainTest()
         {
             int classesCount, attributesCount;
-            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
-            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
 
             var n = new Network().BuildNetwork(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1);
             n.Train(trainData, 5000);
@@ -156,30 +157,33 @@ namespace Tests
             int classesCount;
             int attributesCount;
             var epoch = 0;
-            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
-            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
             var correct = 0;
 
             var network = new BasicNetwork();
 
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 2));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 4));
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 5));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 3));
             network.Structure.FinalizeStructure();
             network.Reset();
 
             INeuralDataSet trainingSet = new BasicNeuralDataSet(trainData.Select(e => e.Item1.ToArray()).ToArray(), trainData.Select(e => e.Item2.ToArray()).ToArray());
-            ITrain train = new ResilientPropagation(network, trainingSet);
+            ITrain train = new Backpropagation(network, trainingSet, 0.3, 0.6);
+            //ITrain train = new ResilientPropagation(network, trainingSet);
 
             do
             {
                 train.Iteration();
                 epoch++;
-            } while ((epoch < 5000) && (train.Error > 0.001));
+            } while ((epoch < 15000) && (train.Error > 0.001));
 
             foreach (IMLDataPair pair in trainingSet)
             {
                 var output = network.Compute(pair.Input);
+                //pair.Ideal
                 if(Network.GetClass(new List<double>(){ output[0], output[1], output[2]}) == Network.GetClass(new List<double>() { pair.Ideal[0], pair.Ideal[1], pair.Ideal[2]}))
                 {
                     correct++;

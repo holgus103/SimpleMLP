@@ -144,7 +144,7 @@ namespace MlpGui
             {
                 //showWaitingDialog();
                 // TODO: ask user for classes count
-                return CsvParser.Parse(dlg.FileName, out classesCount, out attributesCount);
+                return CsvParser.Parse(dlg.FileName, out classesCount, out attributesCount).NormalizedData;
             }
             attributesCount = classesCount = 0;
             return null;

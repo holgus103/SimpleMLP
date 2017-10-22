@@ -23,7 +23,7 @@ namespace Tests
         [TestMethod]
         public void XorTest()
         {
-            Network n = new Network(2, new List<int>() { 4 }, 1, 1, 1);
+            var n = new Network().BuildNetwork(2, new List<int>() { 4 }, 1, 1, 1);
             n.Train(new List<Tuple<List<double>, List<double>>>()
             {
                 new Tuple<List<double>, List<double>>(
@@ -136,7 +136,7 @@ namespace Tests
             var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
             var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount);
 
-            var n = new Network(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1);
+            var n = new Network().BuildNetwork(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1);
             n.Train(trainData, 5000);
             var correct = 0;
             testData.ForEach(e =>
@@ -206,7 +206,7 @@ namespace Tests
                     new List<double>(){ 0.5, 0.55}
                 }
             };
-            Network testNetwork = new Network(wages,
+            var testNetwork = new Network().BuildNetwork(wages,
                 learningRate:0.5, momentum: 1, biasWage: new List<double> { 0.35, 0.6 });
             var trainSet = new List<Tuple<List<double>, List<double>>>()
             {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleMLP
 {
-    public partial class Network
+    public partial class Network : NetworkBase
     {
         private double learningRate;
         private double momentum;
@@ -14,7 +14,9 @@ namespace SimpleMLP
         private InputLayer inputLayer => (InputLayer)this.layers[0];
         private OutputLayer outputLayer => (OutputLayer)this.layers.Last();
 
-        public Network(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum)
+        
+
+        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum)
         {
             this.learningRate = learningRate;
             this.momentum = momentum;
@@ -26,9 +28,10 @@ namespace SimpleMLP
             }
 
             this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            return this;
         }
 
-        public Network(List<List<List<double>>> wages, double learningRate, double momentum, List<double> biasWage)
+        public NetworkBase BuildNetwork(List<List<List<double>>> wages, double learningRate, double momentum, List<double> biasWage)
         {
             this.learningRate = learningRate;
             this.momentum = momentum;
@@ -39,7 +42,7 @@ namespace SimpleMLP
             }
 
             //this.layers.Add(new OutputLayer(this.layers[1], wages[1], new Bias() { Value = 1, Wage = biasWage[1] }));
-
+            return this;
         }
 
 
@@ -71,7 +74,7 @@ namespace SimpleMLP
             }
         }
 
-        public List<double> Train(List<Tuple<List<double>, List<double>>> trainSet, int iterations)
+        public override List<double> Train(List<Tuple<List<double>, List<double>>> trainSet, int iterations)
         {
             var errors = new List<double>(iterations);
             var last = trainSet.Last();
@@ -103,26 +106,11 @@ namespace SimpleMLP
             }
         }
 
-        public List<double> Predict(List<double> inputs)
+        public override List<double> Predict(List<double> inputs)
         {
             this.inputLayer.SetInputs(inputs);
             this.CalculateNetwork();
             return this.outputLayer.GetOutput();
-        }
-
-        public static int GetClass(List<double> res)
-        {
-            double max = res[0];
-            int index = 0;
-            for (var i = 0; i < res.Count; i++)
-            {
-                if (max < res[i])
-                {
-                    max = res[i];
-                    index = i;
-                }
-            }
-            return index;
         }
 
     }

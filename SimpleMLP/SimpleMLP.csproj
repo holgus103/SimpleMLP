@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Bias.cs" />
     <Compile Include="EncogNetwork.cs" />
+    <Compile Include="NetworkBase.cs" />
     <Compile Include="INeuron.cs" />
     <Compile Include="Layers\HiddenLayer.cs" />
     <Compile Include="Layers\InputLayer.cs" />

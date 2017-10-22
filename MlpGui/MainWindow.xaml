@@ -38,6 +38,8 @@
                 <TextBox Width="100" Name="HiddenNeuronsTb"  Grid.Row="2" Grid.Column="1">9</TextBox>
                 <Label Grid.Row="3" Grid.Column="0">Iterations:</Label>
                 <TextBox Width="100" Name="IterationsTb"  Grid.Row="3" Grid.Column="1">1000</TextBox>
+                <!-- TODO: combobox encog vs simplemlp -->
+                <!--<ComboBox></ComboBox>-->
             </Grid>
         </md:DialogHost>
         <Button x:Name="TrainBtn" Style="{DynamicResource MaterialDesignRaisedLightButton}" Content="Train"  Margin="356,35,37,252" Click="TrainBtnClick"/>

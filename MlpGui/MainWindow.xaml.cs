@@ -26,7 +26,7 @@ namespace MlpGui
     /// </summary>
     public partial class MainWindow : Window
     {
-        Network network;
+        NetworkBase network;
         private REngine engine;
 
         public MainWindow()
@@ -51,12 +51,27 @@ namespace MlpGui
             int attributesCount;
             if (!Double.TryParse(this.EtaTb.Text, out learningRate)) return;
             if (!Double.TryParse(this.AlphaTb.Text, out momentum)) return;
-            if (!Int32.TryParse(this.HiddenNeuronsTb.Text, out hiddenNeurons)) return;
+            // parse neuron counts separated by commas
+            var neurons = this.HiddenNeuronsTb.Text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x =>
+            {
+                var res = 0;
+                if (!Int32.TryParse(x, out res))
+                {
+                    return 0;
+                }
+                return res;
+            }).ToList();
+
+            if(neurons.Any(x => x <= 0))
+            {
+                return;
+            }
+
             if (!Int32.TryParse(this.IterationsTb.Text, out iterations)) return;
             var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network(attributesCount, new List<int>() { hiddenNeurons, hiddenNeurons }, classesCount, learningRate, momentum);
+            this.network = new EncogNetwork().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum);
             var tb = ShowWaitingDialog();
             Task.Run(() =>
                {

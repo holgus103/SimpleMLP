@@ -41,19 +41,19 @@ namespace SimpleMLP
             public void AlterWeights(double learningRate, double momentum)
             {
                 var o = this.Output;
-                var d = this.delta * o * (1 - o) * learningRate;
+                var d = this.delta * o * (1 - o);
                 var keys = this.predecessors.Keys.ToList();
                 keys.ForEach(val =>
                     {
                         val.AddToForwardDelta(d * this.predecessors[val]);
-                        this.predecessors[val] -= d * val.Output;
+                        this.predecessors[val] -= d * val.Output * learningRate;
                     }
                 );
                 this.delta = 0;
                 // normalize weights
                 // I HAVE NO IDEA IF THIS IS NECESSARY
-                var sum = this.predecessors.Values.Sum();
-                keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
+                //var sum = this.predecessors.Values.Sum();
+                //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
             }
 
             public void CalculateNeuron() => this.neuronOutput = this.Activate(this.CalculateNetInput());

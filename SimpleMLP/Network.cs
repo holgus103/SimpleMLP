@@ -24,7 +24,7 @@ namespace SimpleMLP
             this.layers.Add(new InputLayer(inputNeurons));
             for(var i = 0; i < hiddenNeurons.Count; i++)
             {
-                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[0]), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[i]), new Bias() { Value = 1, Wage = rand.NextDouble() }));
             }
 
             this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));

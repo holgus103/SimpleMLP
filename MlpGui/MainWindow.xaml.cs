@@ -69,7 +69,7 @@ namespace MlpGui
             }
 
             if (!Int32.TryParse(this.IterationsTb.Text, out iterations)) return;
-            var trainSet = this.GetSetFromFile(ref classesCount, ref attributesCount).NormalizedData;
+            var trainSet = this.GetSetFromFile(ref classesCount, ref attributesCount)?.NormalizedData;
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
             this.network = new Network().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new SigmoidFunction());
@@ -109,8 +109,9 @@ namespace MlpGui
 
         private void TestBtnClick(object sender, RoutedEventArgs e)
         {
+            if (this.network == null) return;
             int classesCount = 0, attributesCount = 0;
-            var testSet = this.GetSetFromFile(ref classesCount, ref attributesCount).NormalizedData;
+            var testSet = this.GetSetFromFile(ref classesCount, ref attributesCount)?.NormalizedData;
             if (testSet is null)
                 return;
             var resX = new List<double>(testSet.Count);
@@ -188,9 +189,11 @@ namespace MlpGui
 
         private void TestBtn_Copy_Click(object sender, RoutedEventArgs e)
         {
+            if (this.network == null) return;
             var classesCount = 0;
             var attributesCount = 0;
             var csvData = this.GetSetFromFile(ref classesCount, ref attributesCount, true);
+            if (csvData == null) return;
             var dataSet = csvData.NormalizedData;
 
             var resX = new List<double>(dataSet.Count);

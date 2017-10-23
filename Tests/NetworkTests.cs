@@ -20,7 +20,6 @@ namespace Tests
     [TestClass]
     public class NetworkTests
     {
-
         [TestMethod]
         public void XorTest()
         {

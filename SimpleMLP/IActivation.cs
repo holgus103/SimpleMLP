@@ -24,7 +24,7 @@ namespace SimpleMLP
     {
         public double Activate(int val) => Math.Max(0, val);
 
-        public IActivationFunction GetEncogActivationFunction() => new ActivationReLU();
+        public IActivationFunction GetEncogActivationFunction() => new ActivationSigmoid();
     }
 
 }

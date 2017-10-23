@@ -71,6 +71,7 @@ namespace MlpGui
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
             this.network = new Network().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new SigmoidFunction());
+
             var tb = ShowWaitingDialog();
             Task.Run(() =>
                {

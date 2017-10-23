@@ -46,6 +46,25 @@ namespace SimpleMLP
         }
 
 
+        public List<double> GetWages()
+        {
+            List<double> wages = new List<double>();
+            foreach (var layer in layers)
+            {
+                foreach (var neuron in layer.Neurons)
+                {
+                    if (neuron is Neuron n)
+                    {
+                        foreach (var wage in n.GetPredecessorsWages())
+                        {
+                            wages.Add(wage);
+                        }
+                    }
+                }
+            }
+            return wages;
+        }
+
         private List<List<double>> CreateWeightLists(int prev, int current)
         {
             // prepare list

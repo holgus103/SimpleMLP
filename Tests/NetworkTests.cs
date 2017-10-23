@@ -221,6 +221,23 @@ namespace Tests
                     )
             };
             testNetwork.Train(trainSet, 1);
+
+            List<double> expectedWages = new List<double>()
+            {
+                0.1498, 0.1996, 0.2498, 0.2995,
+                0.3589, 0.4087, 0.5113, 0.5614
+            };
+            if (testNetwork is Network simpleNetwork)
+            {
+                var networkWages = simpleNetwork.GetWages();
+                for (int i = 0, k = 0; i < networkWages.Count; i++)
+                {
+                    if (i % 3 == 0)
+                        continue;
+                    Assert.AreEqual(expectedWages[k], networkWages[i], 0.0001);
+                    k++;
+                }
+            }
             //Assert działa tak: Puść i sprawdź wagi końcowe
         }
 

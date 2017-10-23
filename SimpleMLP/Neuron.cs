@@ -58,6 +58,15 @@ namespace SimpleMLP
 
             public void CalculateNeuron() => this.neuronOutput = this.Activate(this.CalculateNetInput());
 
+            public List<double> GetPredecessorsWages()
+            {
+                List<double> predWages = new List<double>();
+                foreach (var pred in predecessors)
+                {
+                    predWages.Add(pred.Value);
+                }
+                return predWages;
+            }
         }
     }
 

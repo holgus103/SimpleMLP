@@ -10,7 +10,8 @@ namespace SimpleMLP
     {
         private class OutputLayer : HiddenLayer
         {
-            public OutputLayer(LayerBase incomingLayer, List<List<double>> initialWages, Bias bias = null) : base(incomingLayer, initialWages, bias) { }
+
+            public OutputLayer(LayerBase incomingLayer, List<List<double>> initialWages, IActivation activationFunction, Bias bias = null) : base(incomingLayer, initialWages, activationFunction, bias) { }
 
             public List<double> GetOutput() => this.neurons.Select(n => n.Output).ToList();
             public double GetTotalError(List<double> desiredOutputs) => 

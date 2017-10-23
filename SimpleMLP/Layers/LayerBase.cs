@@ -10,6 +10,7 @@ namespace SimpleMLP
     {
         protected abstract class LayerBase
         {
+            protected IActivation activationFunction;
 
             protected class InputNeuron : INeuron
             {

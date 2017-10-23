@@ -10,6 +10,8 @@ namespace SimpleMLP
     {
         private class InputLayer : LayerBase
         {
+
+
             public InputLayer(int neuronsNumber) : this(Enumerable.Repeat<double>(0, neuronsNumber).ToList())
             {
                 

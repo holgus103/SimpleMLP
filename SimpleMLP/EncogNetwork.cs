@@ -20,13 +20,12 @@ namespace SimpleMLP
         private double momentum;
         private double learningRate;
 
-        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum)
-        {
+        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum, SimpleMLP.IActivation activationFunction)         {
             this.momentum = momentum;
             this.learningRate = learningRate;
-            this.network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, inputNeurons));
-            hiddenNeurons.ForEach(e => network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, e)));
-            this.network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, outputNeurons));
+            this.network.AddLayer(new BasicLayer(activationFunction.GetEncogActivationFunction(), false, inputNeurons));
+            hiddenNeurons.ForEach(e => network.AddLayer(new BasicLayer(activationFunction.GetEncogActivationFunction(), true, e)));
+            this.network.AddLayer(new BasicLayer(activationFunction.GetEncogActivationFunction(), true, outputNeurons));
             this.network.Structure.FinalizeStructure();
             this.network.Reset();
             return this;

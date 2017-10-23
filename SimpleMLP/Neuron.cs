@@ -16,12 +16,19 @@ namespace SimpleMLP
                 this.neuronOutput = initialValue;
             }
 
+            public Neuron(IActivation activationFunction)
+            {
+                this.activationFunction = activationFunction;
+            }
+
             public double Output => this.neuronOutput;
 
             public void AddToForwardDelta(double delta)
             {
                 this.delta += delta;
             }
+
+            protected IActivation activationFunction;
 
             private double delta = 0;
             private double neuronOutput;

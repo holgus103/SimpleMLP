@@ -5,9 +5,10 @@ namespace SimpleMLP
 {
     public abstract class NetworkBase
     {
-        public abstract NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum);
+        public abstract NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum, IActivation activationFunction);
         public abstract List<double> Predict(List<double> inputs);
         public abstract List<double> Train(List<Tuple<List<double>, List<double>>> trainSet, int iterations);
+        protected IActivation activationFunction;
 
         public static int GetClass(List<double> res)
         {

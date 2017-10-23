@@ -14,34 +14,37 @@ namespace SimpleMLP
         private InputLayer inputLayer => (InputLayer)this.layers[0];
         private OutputLayer outputLayer => (OutputLayer)this.layers.Last();
 
+
         
 
-        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum)
+        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum, IActivation activationFunction)
         {
+            this.activationFunction = activationFunction;
             this.learningRate = learningRate;
             this.momentum = momentum;
             var rand = new Random();
             this.layers.Add(new InputLayer(inputNeurons));
             for(var i = 0; i < hiddenNeurons.Count; i++)
             {
-                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[i]), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[i]), activationFunction, new Bias() { Value = 1, Wage = rand.NextDouble() }));
             }
 
-            this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons), new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons), activationFunction, new Bias() { Value = 1, Wage = rand.NextDouble() }));
             return this;
         }
 
-        public NetworkBase BuildNetwork(List<List<List<double>>> wages, double learningRate, double momentum, List<double> biasWage)
+        public NetworkBase BuildNetwork(List<List<List<double>>> wages, double learningRate, double momentum, List<double> biasWage, IActivation activationFunction)
         {
+            this.activationFunction = activationFunction;
             this.learningRate = learningRate;
             this.momentum = momentum;
             this.layers.Add(new InputLayer(wages[0][0].Count));
             for(var i = 0; i< wages.Count - 1; i++)
             {
-                this.layers.Add(new HiddenLayer(this.layers[i], wages[i], new Bias() { Value = 1, Wage = biasWage[i] }));
+                this.layers.Add(new HiddenLayer(this.layers[i], wages[i], activationFunction,  new Bias() { Value = 1, Wage = biasWage[i] }));
             }
 
-            this.layers.Add(new OutputLayer(this.layers.Last(), wages.Last(), new Bias() { Value = 1, Wage = biasWage.Last() }));
+            this.layers.Add(new OutputLayer(this.layers.Last(), wages.Last(), activationFunction,  new Bias() { Value = 1, Wage = biasWage.Last() }));
             return this;
         }
 

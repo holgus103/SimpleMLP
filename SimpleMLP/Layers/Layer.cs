@@ -12,7 +12,7 @@ namespace SimpleMLP
         {
             protected Neuron GetNeuron(int index) => (Neuron)this.neurons[index];
 
-            protected Layer(int neuronsNumber, Bias bias = null) : base(neuronsNumber)
+            protected Layer(int neuronsNumber, IActivation activationFunction, Bias bias = null) : base(neuronsNumber)
             {
                 for (int i = 0; i < neuronsNumber; i++)
                 {

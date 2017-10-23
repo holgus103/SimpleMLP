@@ -12,7 +12,7 @@ namespace SimpleMLP
         private class HiddenLayer : Layer
         {
             //readonly List<Tuple<INeuron, double>> incomingLayerTuple;
-            public HiddenLayer(LayerBase incomingLayer, List<List<double>> initialWages, Bias bias = null) : base(initialWages.Count, bias)
+            public HiddenLayer(LayerBase incomingLayer, List<List<double>> initialWages, IActivation activationFunction, Bias bias = null ) : base(initialWages.Count, activationFunction, bias)
             {
                 for (int i = 0; i < this.neurons.Count; i++)
                 {

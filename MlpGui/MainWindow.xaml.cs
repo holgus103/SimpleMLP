@@ -70,7 +70,7 @@ namespace MlpGui
             var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new EncogNetwork().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new ReLUFunction());
+            this.network = new EncogNetwork().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new SigmoidFunction());
             var tb = ShowWaitingDialog();
             Task.Run(() =>
                {

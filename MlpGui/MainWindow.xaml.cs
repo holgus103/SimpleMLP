@@ -70,7 +70,7 @@ namespace MlpGui
             var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new ReLUFunction());
+            this.network = new Network().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new SigmoidFunction());
             var tb = ShowWaitingDialog();
             Task.Run(() =>
                {
@@ -128,7 +128,7 @@ namespace MlpGui
             );
 
             var data = testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = NetworkBase.GetClass(x.Item2), resCls = NetworkBase.GetClass(this.network.Predict(x.Item1)) });
-            var acc = data.Count(x => x.cls == x.resCls) / data.Count() * 100;
+            var acc = data.Count(x => x.cls == x.resCls) / (double)data.Count() * 100;
             this.AccLbl.Content = acc.ToString();
             this.DrawChart(
                 "Trained results",

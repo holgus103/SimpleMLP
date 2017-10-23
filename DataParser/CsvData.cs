@@ -37,7 +37,7 @@ namespace DataParser
                (
                     e => new Tuple<List<double>, List<double>>
                     (
-                        e.Item1.Zip(this.attributeSpansAndShifts, (f, info) => (f - info.Item2) / info.Item1).ToList(),
+                        e.Item1.Zip(this.attributeSpansAndShifts, (f, info) => (2 * (f - info.Item2) / info.Item1) - 1).ToList(),
                         e.Item2
                     )
                 ).ToList();

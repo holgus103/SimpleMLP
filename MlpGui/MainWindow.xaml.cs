@@ -80,6 +80,7 @@ namespace MlpGui
                    {
                        this.DrawChart
                        (
+                           "Error function",
                            new List<IEnumerable<Tuple<double, double>>>() { Enumerable.Range(1, iterations).Zip(errors, (it, val) => new Tuple<double, double>((double)it, val)) },
                            1,
                            iterations,
@@ -118,6 +119,7 @@ namespace MlpGui
             var highY = testSet.Max(x => x.Item1[1]);
             this.DrawChart
             (
+                "Correct results",
                 testSet.GroupBy(x => x.Item2.IndexOf(1.0)).Select(g => g.Select(x => new Tuple<double, double>(x.Item1[0], x.Item1[1]))),
                 lowX,
                 highX,
@@ -129,6 +131,7 @@ namespace MlpGui
             var acc = data.Count(x => x.cls == x.resCls) / data.Count() * 100;
             this.AccLbl.Content = acc.ToString();
             this.DrawChart(
+                "Trained results",
                 data.GroupBy(x => x.resCls)
                     .Select(x => x.Select(y => new Tuple<double, double>(y.x, y.y))),
                 lowX,
@@ -152,17 +155,18 @@ namespace MlpGui
             return null;
         }
 
-        private void DrawChart(IEnumerable<IEnumerable<Tuple<double, double>>> data, double lowX, double highX, double lowY, double highY)
+        private void DrawChart(string chartName, IEnumerable<IEnumerable<Tuple<double, double>>> data, double lowX, double highX, double lowY, double highY)
         {
             if (data.Count() == 0) return;
             var colorIndex = 0;
             var colors = new[] { "red", "green", "blue", "yellow" };
             this.engine.Evaluate("dev.new()");
             this.engine.SetSymbol("lowX", this.engine.CreateNumeric(lowX));
+            //this.engine.SetSymbol("main", this.engine.CreateCharacter("Chart number1"));
             this.engine.SetSymbol("highX", this.engine.CreateNumeric(highX));
             this.engine.SetSymbol("lowY", this.engine.CreateNumeric(lowY));
             this.engine.SetSymbol("highY", this.engine.CreateNumeric(highY));
-            this.engine.Evaluate($"plot(1, type=\"n\", xlab=\"X\", ylab=\"Y\", xlim=c(lowX, highX), ylim=c(lowY, highY))");
+            this.engine.Evaluate($"plot(1, type=\"n\", xlab=\"X\", ylab=\"Y\", xlim=c(lowX, highX), ylim=c(lowY, highY), main='{chartName}')");
             foreach (var val in data)
             {
                 // get xs

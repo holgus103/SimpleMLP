@@ -14,6 +14,8 @@ namespace DataParser
 
         public List<Tuple<List<double>, List<double>>> NormalizedData => this.normalizedData;
 
+
+        public CsvData() { }
         public CsvData(List<Tuple<List<double>, List<double>>> data)
         {
             this.data = data;

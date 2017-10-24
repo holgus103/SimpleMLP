@@ -38,6 +38,7 @@ namespace SimpleMLP
             private double delta = 0;
             private double neuronOutput;
             private Dictionary<INeuron, double> predecessors = new Dictionary<INeuron, double>();
+            private Dictionary<INeuron, double> lastUpdate = new Dictionary<INeuron, double>();
             private double CalculateNetInput() => this.predecessors.Aggregate(0.0, (s, t) => s + t.Key.Output * t.Value);
             // activationFunction
             private double Activate(double val) => 1 / (1 + Math.Exp(-val));
@@ -47,11 +48,13 @@ namespace SimpleMLP
                 foreach (var incomingNeuronTuple in incomingNeurons)
                 {
                     this.predecessors.Add(incomingNeuronTuple.Item1, incomingNeuronTuple.Item2);
+                    this.lastUpdate.Add(incomingNeuronTuple.Item1, 0);
                 }
             }
 
             public void AlterWeights(double learningRate, double momentum, Layer layerType)
             {
+                
                 var o = this.Output;
                 var d = this.delta;
                 if (networkType is ClassificationNetwork || !(layerType is OutputLayer))
@@ -60,7 +63,8 @@ namespace SimpleMLP
                 keys.ForEach(val =>
                     {
                         val.AddToForwardDelta(d * this.predecessors[val]);
-                        this.predecessors[val] -= d * val.Output * learningRate;
+                        this.predecessors[val] -= momentum * this.lastUpdate[val] + d * val.Output * learningRate;
+                        this.lastUpdate[val] = d * val.Output * learningRate;
                     }
                 );
                 this.delta = 0;

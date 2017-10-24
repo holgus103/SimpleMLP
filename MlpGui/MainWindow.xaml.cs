@@ -28,12 +28,16 @@ namespace MlpGui
     {
         NetworkBase network;
         private REngine engine;
+        private INetwork networkType;
 
         public MainWindow()
         {
             this.InitializeComponent();
             REngine.SetEnvironmentVariables();
             this.engine = REngine.GetInstance();
+            TypeComboBox.Items.Add("Classification");
+            TypeComboBox.Items.Add("Regression");
+            TypeComboBox.SelectedValue = "Regression";
         }
 
         ~MainWindow()
@@ -48,8 +52,15 @@ namespace MlpGui
             int iterations;
             int classesCount;
             int attributesCount;
+            if (TypeComboBox.SelectedItem is null) return;
+            if (TypeComboBox.SelectedValue.ToString() == "Classification")
+                networkType = new ClassificationNetwork();
+            else
+                networkType = new RegressionNetwork();
             if (!Double.TryParse(this.EtaTb.Text, out learningRate)) return;
             if (!Double.TryParse(this.AlphaTb.Text, out momentum)) return;
+
+
             // parse neuron counts separated by commas
             var neurons = this.HiddenNeuronsTb.Text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(x =>
             {
@@ -61,7 +72,7 @@ namespace MlpGui
                 return res;
             }).ToList();
 
-            if(neurons.Any(x => x <= 0))
+            if (neurons.Any(x => x <= 0))
             {
                 return;
             }
@@ -70,7 +81,14 @@ namespace MlpGui
             var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
-            this.network = new Network().BuildNetwork(attributesCount, neurons, classesCount, learningRate, momentum, new SigmoidFunction());
+            int outputNeurons = classesCount;
+            IActivation activationFunction = new SigmoidFunction();
+            if (networkType is RegressionNetwork)
+            {
+                outputNeurons = 1;
+                activationFunction = new IdentityFunction();
+            }
+            this.network = new Network().BuildNetwork(attributesCount, neurons, outputNeurons, learningRate, momentum, activationFunction, networkType);
 
             var tb = ShowWaitingDialog();
             Task.Run(() =>
@@ -116,19 +134,48 @@ namespace MlpGui
 
             var lowX = testSet.Min(x => x.Item1[0]);
             var highX = testSet.Max(x => x.Item1[0]);
-            var lowY = testSet.Min(x => x.Item1[1]);
-            var highY = testSet.Max(x => x.Item1[1]);
-            this.DrawChart
-            (
-                "Correct results",
-                testSet.GroupBy(x => x.Item2.IndexOf(1.0)).Select(g => g.Select(x => new Tuple<double, double>(x.Item1[0], x.Item1[1]))),
-                lowX,
-                highX,
-                lowY,
-                highY
-            );
+            var lowY = 0.0;
+            var highY = 0.0;
+            if(networkType is ClassificationNetwork)
+            {
+                lowY = testSet.Min(x => x.Item1[1]);
+                highY = testSet.Max(x => x.Item1[1]);
+            }
+            else if(networkType is RegressionNetwork)
+            {
+                lowY = testSet.Min(x => x.Item2[0]);
+                highY = testSet.Max(x => x.Item2[0]);
+            }
+            if(networkType is ClassificationNetwork)
+            {
+                this.DrawChart
+                (
+                    "Correct results",
+                    testSet.GroupBy(x => x.Item2.IndexOf(1.0)).Select(g => g.Select(x => new Tuple<double, double>(x.Item1[0], x.Item1[1]))),
+                    lowX,
+                    highX,
+                    lowY,
+                    highY
+                );
+            }
+            else
+            {
+                this.DrawChart
+                (
+                    "Correct results",
+                    testSet.GroupBy(x => x.Item2.IndexOf(1.0)).Select(g => g.Select(x => new Tuple<double, double>(x.Item1[0], x.Item2[0]))),
+                    lowX,
+                    highX,
+                    lowY,
+                    highY
+                );
+            }
 
             var data = testSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], cls = NetworkBase.GetClass(x.Item2), resCls = NetworkBase.GetClass(this.network.Predict(x.Item1)) });
+            if(networkType is RegressionNetwork)
+            {
+                data = testSet.Select(x => new { x = x.Item1[0], y = this.network.Predict(x.Item1).First(), cls = NetworkBase.GetClass(x.Item2), resCls = NetworkBase.GetClass(this.network.Predict(x.Item2)) });
+            }
             var acc = data.Count(x => x.cls == x.resCls) / (double)data.Count() * 100;
             this.AccLbl.Content = acc.ToString();
             this.DrawChart(
@@ -150,7 +197,8 @@ namespace MlpGui
             {
                 //showWaitingDialog();
                 // TODO: ask user for classes count
-                return CsvParser.Parse(dlg.FileName, out classesCount, out attributesCount).NormalizedData;
+                //return CsvParser.Parse(dlg.FileName, out classesCount, out attributesCount).NormalizedData;
+                return networkType.Parse(dlg.FileName, out classesCount, out attributesCount);
             }
             attributesCount = classesCount = 0;
             return null;

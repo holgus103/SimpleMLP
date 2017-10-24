@@ -23,7 +23,7 @@ namespace Tests
         [TestMethod]
         public void XorTest()
         {
-            var n = new Network().BuildNetwork(2, new List<int>() { 4 }, 1, 1, 1, new SigmoidFunction());
+            var n = new Network().BuildNetwork(2, new List<int>() { 4 }, 1, 1, 1, new SigmoidFunction(), new ClassificationNetwork());
             n.Train(new List<Tuple<List<double>, List<double>>>()
             {
                 new Tuple<List<double>, List<double>>(
@@ -136,7 +136,7 @@ namespace Tests
             var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
             var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
 
-            var n = new Network().BuildNetwork(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1, new SigmoidFunction());
+            var n = new Network().BuildNetwork(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1, new SigmoidFunction(), new ClassificationNetwork());
             n.Train(trainData, 1000);
             var correct = 0;
             testData.ForEach(e =>
@@ -237,7 +237,52 @@ namespace Tests
                     k++;
                 }
             }
-            //Assert działa tak: Puść i sprawdź wagi końcowe
+        }
+
+        [TestMethod]
+        public void RegressionTest()
+        {
+            var wages = new List<List<List<double>>>()
+            {
+                new List<List<double>>()
+                {
+                    new List<double>(){ 0.15},
+                    new List<double>(){ 0.25}
+                },
+
+                new List<List<double>>()
+                {
+                    new List<double>(){ 0.4, 0.45},
+                }
+            };
+            var testNetwork = new Network().BuildNetwork(wages,
+                learningRate: 0.5, momentum: 1, biasWage: new List<double> { 0.35, 0.6 }, activationFunction: new SigmoidFunction());
+            var trainSet = new List<Tuple<List<double>, List<double>>>()
+            {
+                new Tuple<List<double>, List<double>>
+                (
+                  new List<double>(){0.1},
+                  new List<double>(){0.99}
+                    )
+            };
+            testNetwork.Train(trainSet, 1);
+
+            List<double> expectedWages = new List<double>()
+            {
+                0.1498, 0.1996, 0.2498, 0.2995,
+                0.3589, 0.4087, 0.5113, 0.5614
+            };
+            if (testNetwork is Network simpleNetwork)
+            {
+                var networkWages = simpleNetwork.GetWages();
+                for (int i = 0, k = 0; i < networkWages.Count; i++)
+                {
+                    if (i % 3 == 0)
+                        continue;
+                    Assert.AreEqual(expectedWages[k], networkWages[i], 0.0001);
+                    k++;
+                }
+            }
         }
 
     }

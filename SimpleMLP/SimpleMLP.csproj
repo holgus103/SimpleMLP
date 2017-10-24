@@ -53,6 +53,9 @@
     <Compile Include="Layers\InputLayer.cs" />
     <Compile Include="Layers\LayerBase.cs" />
     <Compile Include="Network.cs" />
+    <Compile Include="NetworkTypes\ClassificationNetwork.cs" />
+    <Compile Include="NetworkTypes\NetworkType.cs" />
+    <Compile Include="NetworkTypes\RegressionNetwork.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="Layers\Layer.cs" />
     <Compile Include="Layers\OutputLayer.cs" />
@@ -60,6 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataParser\DataParser.csproj">
+      <Project>{9FD4019E-94C8-4854-92BA-F1D6D95A7BD8}</Project>
+      <Name>DataParser</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

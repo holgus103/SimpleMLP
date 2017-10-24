@@ -16,9 +16,13 @@ namespace SimpleMLP
                 this.neuronOutput = initialValue;
             }
 
-            public Neuron(IActivation activationFunction)
+            public Neuron(IActivation activationFunction, INetwork networkType)
             {
                 this.activationFunction = activationFunction;
+                if (networkType is null)
+                    this.networkType = new ClassificationNetwork();
+                else
+                    this.networkType = networkType;
             }
 
             public double Output => this.neuronOutput;
@@ -29,6 +33,7 @@ namespace SimpleMLP
             }
 
             protected IActivation activationFunction;
+            protected INetwork networkType;
 
             private double delta = 0;
             private double neuronOutput;
@@ -45,10 +50,12 @@ namespace SimpleMLP
                 }
             }
 
-            public void AlterWeights(double learningRate, double momentum)
+            public void AlterWeights(double learningRate, double momentum, Layer layerType)
             {
                 var o = this.Output;
-                var d = this.delta * o * (1 - o);
+                var d = this.delta;
+                if (networkType is ClassificationNetwork || !(layerType is OutputLayer))
+                    d *= o * (1 - o);
                 var keys = this.predecessors.Keys.ToList();
                 keys.ForEach(val =>
                     {
@@ -63,7 +70,7 @@ namespace SimpleMLP
                 //keys.ForEach(val => this.predecessors[val] = this.predecessors[val] / sum);
             }
 
-            public void CalculateNeuron() => this.neuronOutput = this.Activate(this.CalculateNetInput());
+            public void CalculateNeuron() => this.neuronOutput = this.activationFunction.Activate(this.CalculateNetInput());
 
             public List<double> GetPredecessorsWages()
             {

@@ -19,8 +19,9 @@
             <md:DialogHost.DialogContent>
                 <TextBox>LALALAL Holger Śmieszek</TextBox>
             </md:DialogHost.DialogContent>
-            <Grid Width="250" Height="125" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid Width="250" Height="150" HorizontalAlignment="Left" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
@@ -39,8 +40,10 @@
                 <TextBox Width="100" Name="HiddenNeuronsTb"  Grid.Row="2" Grid.Column="1">9</TextBox>
                 <Label Grid.Row="3" Grid.Column="0">Iterations:</Label>
                 <TextBox Width="100" Name="IterationsTb"  Grid.Row="3" Grid.Column="1">1000</TextBox>
-                <Label Grid.Row="4" Grid.Column="0">Accuracy:</Label>
-                <Label Grid.Row="4" Grid.Column="1" x:Name="AccLbl"></Label>
+                <Label Grid.Row="4" Grid.Column="0"> Type:</Label>
+                <ComboBox Grid.Row="4" Grid.Column="1" Name="TypeComboBox"></ComboBox>
+                <Label Grid.Row="5" Grid.Column="0">Accuracy:</Label>
+                <Label Grid.Row="5" Grid.Column="1" x:Name="AccLbl"></Label>
                 <!-- TODO: combobox encog vs simplemlp -->
                 <!--<ComboBox></ComboBox>-->
             </Grid>

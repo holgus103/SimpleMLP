@@ -11,6 +11,7 @@ namespace SimpleMLP
         protected abstract class LayerBase
         {
             protected IActivation activationFunction;
+            protected INetwork networkType;
 
             protected class InputNeuron : INeuron
             {
@@ -27,7 +28,7 @@ namespace SimpleMLP
                     this.neuronValue = neuronValue;
                 }
 
-                public void AlterWeights(double learningRate, double momentum)
+                public void AlterWeights(double learningRate, double momentum, Layer layerType)
                 {
                 }
 

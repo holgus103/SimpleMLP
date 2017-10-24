@@ -13,12 +13,13 @@ namespace SimpleMLP
         private List<LayerBase> layers = new List<LayerBase>();
         private InputLayer inputLayer => (InputLayer)this.layers[0];
         private OutputLayer outputLayer => (OutputLayer)this.layers.Last();
+        private INetwork networkType;
 
 
-        
-
-        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum, IActivation activationFunction)
+        public override NetworkBase BuildNetwork(int inputNeurons, List<int> hiddenNeurons, int outputNeurons, double learningRate, double momentum,
+            IActivation activationFunction, INetwork networkType)
         {
+            this.networkType = networkType;
             this.activationFunction = activationFunction;
             this.learningRate = learningRate;
             this.momentum = momentum;
@@ -26,10 +27,12 @@ namespace SimpleMLP
             this.layers.Add(new InputLayer(inputNeurons));
             for(var i = 0; i < hiddenNeurons.Count; i++)
             {
-                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[i]), activationFunction, new Bias() { Value = 1, Wage = rand.NextDouble() }));
+                this.layers.Add(new HiddenLayer(this.layers[i], this.CreateWeightLists(this.layers[i].Count, hiddenNeurons[i]),
+                    new SigmoidFunction(), this.networkType, new Bias() { Value = 1, Wage = rand.NextDouble() }));
             }
 
-            this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons), activationFunction, new Bias() { Value = 1, Wage = rand.NextDouble() }));
+            this.layers.Add(new OutputLayer(this.layers.Last(), this.CreateWeightLists(this.layers.Last().Count, outputNeurons),
+                activationFunction, this.networkType, new Bias() { Value = 1, Wage = rand.NextDouble() }));
             return this;
         }
 
@@ -41,13 +44,12 @@ namespace SimpleMLP
             this.layers.Add(new InputLayer(wages[0][0].Count));
             for(var i = 0; i< wages.Count - 1; i++)
             {
-                this.layers.Add(new HiddenLayer(this.layers[i], wages[i], activationFunction,  new Bias() { Value = 1, Wage = biasWage[i] }));
+                this.layers.Add(new HiddenLayer(this.layers[i], wages[i], new SigmoidFunction(), networkType, new Bias() { Value = 1, Wage = biasWage[i] }));
             }
 
-            this.layers.Add(new OutputLayer(this.layers.Last(), wages.Last(), activationFunction,  new Bias() { Value = 1, Wage = biasWage.Last() }));
+            this.layers.Add(new OutputLayer(this.layers.Last(), wages.Last(), activationFunction, networkType, new Bias() { Value = 1, Wage = biasWage.Last() }));
             return this;
         }
-
 
         public List<double> GetWages()
         {
@@ -108,8 +110,8 @@ namespace SimpleMLP
                     {
                         this.inputLayer.SetInputs(e.Item1);
                         this.CalculateNetwork();
-                        sum += this.outputLayer.GetTotalError(e.Item2);
                         this.BackpropagationError(e.Item2);
+                        sum += this.outputLayer.GetTotalError(e.Item2);
                     }
                 );
 

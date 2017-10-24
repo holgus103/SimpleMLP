@@ -12,11 +12,20 @@ namespace SimpleMLP
         {
             protected Neuron GetNeuron(int index) => (Neuron)this.neurons[index];
 
-            protected Layer(int neuronsNumber, IActivation activationFunction, Bias bias = null) : base(neuronsNumber)
+            protected Layer(int neuronsNumber, IActivation activationFunction, INetwork networkType,  Bias bias = null) : base(neuronsNumber)
             {
+                this.networkType = networkType;
+                if (activationFunction is null)
+                    this.activationFunction = new SigmoidFunction();
+                if (this is OutputLayer && networkType is RegressionNetwork)
+                    this.activationFunction = new IdentityFunction();
+                else
+                    this.activationFunction = activationFunction;
+                //if (!(activationFunction is null))
+                //    this.activationFunction = activationFunction;
                 for (int i = 0; i < neuronsNumber; i++)
                 {
-                    this.neurons.Add(new Neuron());
+                    this.neurons.Add(new Neuron(activationFunction, this.networkType));
                 }
                 if (bias == null) return;
                 //neurons.Add(new InputNeuron(bias.Value));
@@ -36,7 +45,7 @@ namespace SimpleMLP
 
             public override void AlterWeights(double learningRate, double momentum)
             {
-                this.neurons.ForEach(n => n.AlterWeights(learningRate, momentum));
+                this.neurons.ForEach(n => n.AlterWeights(learningRate, momentum, this));
             }
         }
     }

@@ -12,8 +12,12 @@ namespace SimpleMLP
         private class HiddenLayer : Layer
         {
             //readonly List<Tuple<INeuron, double>> incomingLayerTuple;
-            public HiddenLayer(LayerBase incomingLayer, List<List<double>> initialWages, IActivation activationFunction, Bias bias = null ) : base(initialWages.Count, activationFunction, bias)
+            public HiddenLayer(LayerBase incomingLayer, List<List<double>> initialWages, IActivation activationFunction, INetwork networkType, Bias bias = null )
+                : base(initialWages.Count, activationFunction, networkType, bias)
             {
+                //this.networkType = networkType;
+                if (activationFunction is null)
+                    this.activationFunction = new SigmoidFunction();
                 for (int i = 0; i < this.neurons.Count; i++)
                 {
                     var predecessors = new List<Tuple<INeuron, double>>();

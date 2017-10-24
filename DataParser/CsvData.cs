@@ -13,6 +13,7 @@ namespace DataParser
         List<Tuple<double, double>> attributeSpansAndShifts;
 
         public List<Tuple<List<double>, List<double>>> NormalizedData => this.normalizedData;
+        public List<Tuple<List<double>, List<double>>> RegularData => this.data;
 
 
         public CsvData() { }

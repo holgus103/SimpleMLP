@@ -10,7 +10,7 @@ namespace SimpleMLP
 {
     public class ClassificationNetwork : INetwork
     {
-        public List<Tuple<List<double>, List<double>>> Parse(string path, out int classes, out int attributesCount)
+        public CsvData Parse(string path, ref int classes, ref int attributesCount, bool attributesOnly)
         {
             var data = File.ReadAllLines(path)
                     .Skip(1)
@@ -42,7 +42,7 @@ namespace SimpleMLP
             })
                 .ToList();
 
-            return new CsvData(output).NormalizedData;
+            return new CsvData(output);
         }
     }
 }

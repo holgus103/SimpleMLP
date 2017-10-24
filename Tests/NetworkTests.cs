@@ -118,8 +118,8 @@ namespace Tests
         [TestMethod]
         public void ParserTest()
         {
-            int classesCount, attributesCount;
-            var data = CsvParser.Parse("./../../in.txt", out classesCount, out attributesCount).NormalizedData;
+            int classesCount = 0, attributesCount = 0;
+            var data = CsvParser.Parse("./../../in.txt", ref classesCount, ref attributesCount).NormalizedData;
             Assert.AreEqual(data.Count, classesCount);
             CollectionAssert.AreEqual(new double[] { 1, 1 }, data[0].Item1);
             CollectionAssert.AreEqual(new double[] { 1, 0, 0 }, data[0].Item2);
@@ -132,9 +132,9 @@ namespace Tests
         [TestMethod]
         public void MainTest()
         {
-            int classesCount, attributesCount;
-            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
-            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
+            int classesCount = 0, attributesCount = 0;
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", ref classesCount, ref attributesCount).NormalizedData;
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", ref classesCount, ref attributesCount).NormalizedData;
 
             var n = new Network().BuildNetwork(attributesCount, new List<int>() { 4, 3 }, classesCount, 1, 1, new SigmoidFunction(), new ClassificationNetwork());
             n.Train(trainData, 1000);
@@ -153,11 +153,11 @@ namespace Tests
         [TestMethod]
         public void MainTestEncog()
         {
-            int classesCount;
-            int attributesCount;
+            int classesCount = 0;
+            int attributesCount = 0;
             var epoch = 0;
-            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
-            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", out classesCount, out attributesCount).NormalizedData;
+            var trainData = CsvParser.Parse("./../../../DataSets/data.train.csv", ref classesCount, ref attributesCount).NormalizedData;
+            var testData = CsvParser.Parse("./../../../DataSets/data.train.csv", ref classesCount, ref attributesCount).NormalizedData;
             var correct = 0;
 
             var network = new BasicNetwork();

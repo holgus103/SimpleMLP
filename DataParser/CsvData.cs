@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace DataParser
         List<Tuple<double, double>> attributeSpansAndShifts;
 
         public List<Tuple<List<double>, List<double>>> NormalizedData => this.normalizedData;
-        public List<Tuple<List<double>, List<double>>> RegularData => this.data;
+        public List<Tuple<List<double>, List<double>>> RawData => this.data;
 
 
         public CsvData() { }

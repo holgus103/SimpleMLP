@@ -18,6 +18,8 @@ using SimpleMLP;
 using MaterialDesignThemes.Wpf;
 using RDotNet;
 using System.Threading;
+using System.IO;
+using System.Globalization;
 
 namespace MlpGui
 {
@@ -50,13 +52,13 @@ namespace MlpGui
             double learningRate;
             double momentum;
             int iterations;
-            int classesCount;
-            int attributesCount;
             if (TypeComboBox.SelectedItem is null) return;
             if (TypeComboBox.SelectedValue.ToString() == "Classification")
                 networkType = new ClassificationNetwork();
             else
                 networkType = new RegressionNetwork();
+            int classesCount = 0;
+            int attributesCount = 0;
             if (!Double.TryParse(this.EtaTb.Text, out learningRate)) return;
             if (!Double.TryParse(this.AlphaTb.Text, out momentum)) return;
 
@@ -78,7 +80,7 @@ namespace MlpGui
             }
 
             if (!Int32.TryParse(this.IterationsTb.Text, out iterations)) return;
-            var trainSet = this.GetSetFromFile(out classesCount, out attributesCount);
+            var trainSet = this.GetSetFromFile(ref classesCount, ref attributesCount)?.NormalizedData;
             if (trainSet == null) return;
             // TODO: permit user to model network and edit parameters
             int outputNeurons = classesCount;
@@ -125,8 +127,9 @@ namespace MlpGui
 
         private void TestBtnClick(object sender, RoutedEventArgs e)
         {
-            int classesCount, attributesCount;
-            var testSet = this.GetSetFromFile(out classesCount, out attributesCount);
+            if (this.network == null) return;
+            int classesCount = 0, attributesCount = 0;
+            var testSet = this.GetSetFromFile(ref classesCount, ref attributesCount)?.NormalizedData;
             if (testSet is null)
                 return;
             var resX = new List<double>(testSet.Count);
@@ -177,7 +180,6 @@ namespace MlpGui
                 data = testSet.Select(x => new { x = x.Item1[0], y = this.network.Predict(x.Item1).First(), cls = NetworkBase.GetClass(x.Item2), resCls = NetworkBase.GetClass(this.network.Predict(x.Item2)) });
             }
             var acc = data.Count(x => x.cls == x.resCls) / (double)data.Count() * 100;
-            this.AccLbl.Content = acc.ToString();
             this.DrawChart(
                 "Trained results",
                 data.GroupBy(x => x.resCls)
@@ -187,18 +189,22 @@ namespace MlpGui
                 lowY,
                 highY
             );
+            this.AccLbl.Content = acc.ToString();
 
         }
 
-        private List<Tuple<List<double>, List<double>>> GetSetFromFile(out int classesCount, out int attributesCount)
+        private CsvData GetSetFromFile(ref int classesCount, ref int attributesCount, bool attributesOnly = false)
         {
             OpenFileDialog dlg = new OpenFileDialog();
             if (dlg.ShowDialog() == true)
             {
                 //showWaitingDialog();
                 // TODO: ask user for classes count
+
                 //return CsvParser.Parse(dlg.FileName, out classesCount, out attributesCount).NormalizedData;
-                return networkType.Parse(dlg.FileName, out classesCount, out attributesCount);
+                return networkType.Parse(dlg.FileName, ref classesCount, ref attributesCount, attributesOnly);
+                //return CsvParser.Parse(dlg.FileName, ref classesCount, ref attributesCount, attributesOnly);
+
             }
             attributesCount = classesCount = 0;
             return null;
@@ -225,6 +231,48 @@ namespace MlpGui
                 engine.SetSymbol("color", engine.CreateCharacterVector(new[] { colors[colorIndex % colors.Length] }));
                 engine.Evaluate("points(x, y, col = color)");
                 colorIndex++;
+            }
+        }
+
+        private void TestBtn_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.network == null) return;
+            var classesCount = 0;
+            var attributesCount = 0;
+            var csvData = this.GetSetFromFile(ref classesCount, ref attributesCount, true);
+            if (csvData == null) return;
+            var dataSet = csvData.NormalizedData;
+
+            var resX = new List<double>(dataSet.Count);
+            var resY = new List<double>(dataSet.Count);
+
+            var lowX = dataSet.Min(x => x.Item1[0]);
+            var highX = dataSet.Max(x => x.Item1[0]);
+            var lowY = dataSet.Min(x => x.Item1[1]);
+            var highY = dataSet.Max(x => x.Item1[1]);
+
+            var data = dataSet.Select(x => new { x = x.Item1[0], y = x.Item1[1], resCls = NetworkBase.GetClass(this.network.Predict(x.Item1)) });
+
+            this.DrawChart(
+                "Trained results",
+                data.GroupBy(x => x.resCls)
+                    .Select(x => x.Select(y => new Tuple<double, double>(y.x, y.y))),
+                lowX,
+                highX,
+                lowY,
+                highY
+            );
+
+            SaveFileDialog saveFileDlg = new SaveFileDialog();
+            saveFileDlg.Filter = "csv files (*.csv)|*.txt|All files (*.*)|*.*";
+            var c = new CultureInfo("en-US");
+            if (saveFileDlg.ShowDialog() == true)
+            {
+                File.WriteAllLines
+                (
+                    saveFileDlg.FileName,
+                    data.Zip(csvData.RawData, (f, s) => $"{s.Item1[0].ToString(c)},{s.Item1[1].ToString(c)},{f.resCls + 1}")
+                );
             }
         }
     }

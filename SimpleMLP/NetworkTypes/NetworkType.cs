@@ -9,7 +9,7 @@ namespace SimpleMLP
 {
     public interface INetwork
     {
-        List<Tuple<List<double>, List<double>>> Parse(string path, out int classes, out int attributesCount);
+        CsvData Parse(string path, ref int classes, ref int attributesCount, bool attributesOnly);
     }
 
 }

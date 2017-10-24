@@ -50,5 +50,6 @@
         </md:DialogHost>
         <Button x:Name="TrainBtn" Style="{DynamicResource MaterialDesignRaisedLightButton}" Content="Train"  Margin="356,35,37,252" Click="TrainBtnClick"/>
         <Button x:Name="TestBtn" Style="{DynamicResource MaterialDesignRaisedLightButton}" Content="Test" Margin="356,86,37,201" Click="TestBtnClick"/>
+        <Button x:Name="TestBtn_Copy" Style="{DynamicResource MaterialDesignRaisedLightButton}" Content="Classify" Margin="356,135,37,152" Click="TestBtn_Copy_Click"/>
     </Grid>
 </Window>

@@ -7,28 +7,39 @@ namespace DataParser
 {
     public class CsvParser
     {
-        public static CsvData Parse(string path, out int classes, out int attributesCount)
+        public static CsvData Parse(string path, ref int classes, ref int attributesCount, bool attributesOnly = false)
         {
             var data = File.ReadAllLines(path)
                 .Skip(1)
                 .Select(e => e.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries));
-
-            attributesCount = data.First().Length - 1;
-            var classesCount = data.Select(e => e[e.Length - 1]).Distinct().Count();
-            classes = classesCount;
-
+            int classesCount;
+            if (attributesOnly)
+            {
+                classesCount = classes;
+                attributesCount = data.First().Length;
+            }
+            else
+            {
+                attributesCount = data.First().Length - 1;
+                classesCount = data.Select(e => e[e.Length - 1]).Distinct().Count();
+                classes = classesCount;
+            }
             var output = data.Select(a =>
                 {
-                    var cls = Int32.Parse(a[2]);
-                    var outputs = new List<double>(classesCount);
-                    for (var i = 1; i < cls; i++)
+                    List<double> outputs = null;
+                    if (!attributesOnly)
                     {
-                        outputs.Add((double)0);
-                    }
-                    outputs.Add((double)1);
-                    for (var i = 0; i < classesCount - cls; i++)
-                    {
-                        outputs.Add((double)0);
+                        var cls = Int32.Parse(a[2]);
+                        outputs = new List<double>(classesCount);
+                        for (var i = 1; i < cls; i++)
+                        {
+                            outputs.Add((double)0);
+                        }
+                        outputs.Add((double)1);
+                        for (var i = 0; i < classesCount - cls; i++)
+                        {
+                            outputs.Add((double)0);
+                        }
                     }
 
                     return new Tuple<List<double>, List<double>>
